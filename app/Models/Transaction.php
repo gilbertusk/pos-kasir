@@ -6,7 +6,29 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @property int $id
+ * @property string $transaction_number
+ * @property int $user_id
+ * @property float $subtotal
+ * @property float $discount_percent
+ * @property float $discount_amount
+ * @property float $tax_percent
+ * @property float $tax_amount
+ * @property float $total
+ * @property string $payment_method
+ * @property float $paid_amount
+ * @property float $change_amount
+ * @property string $status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $user
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\TransactionItem[] $items
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Transaction lunas()
+ */
 class Transaction extends Model
+
 {
     use HasFactory;
 

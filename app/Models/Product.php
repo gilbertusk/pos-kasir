@@ -5,7 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property string $code
+ * @property string $name
+ * @property string $category
+ * @property string $unit
+ * @property float $buy_price
+ * @property float $sell_price
+ * @property int $stock
+ * @property int $min_stock
+ * @property string|null $image
+ * @property string|null $description
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Product query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Product lowStock()
+ */
 class Product extends Model
+
 {
     use HasFactory;
 
@@ -31,17 +50,18 @@ class Product extends Model
         'is_active' => 'boolean',
     ];
 
-    public function scopeActive($query)
+    public function scopeActive(\Illuminate\Database\Eloquent\Builder $query)
     {
         return $query->where('is_active', true);
     }
 
-    public function scopeLowStock($query)
+    public function scopeLowStock(\Illuminate\Database\Eloquent\Builder $query)
     {
         return $query->whereColumn('stock', '<=', 'min_stock');
     }
 
-    public function scopeByCategory($query, $category)
+    public function scopeByCategory(\Illuminate\Database\Eloquent\Builder $query, string $category)
+
     {
         if ($category && $category !== 'semua') {
             return $query->where('category', $category);

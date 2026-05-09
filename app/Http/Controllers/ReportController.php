@@ -21,45 +21,49 @@ class ReportController extends Controller
 
         // Summary
         $totalTransactions = Transaction::lunas()
-            ->whereDate('created_at', '>=', $startDate)
-            ->whereDate('created_at', '<=', $endDate)
+            ->where(DB::raw('DATE(created_at)'), '>=', $startDate)
+            ->where(DB::raw('DATE(created_at)'), '<=', $endDate)
             ->count();
 
         $totalRevenue = Transaction::lunas()
-            ->whereDate('created_at', '>=', $startDate)
-            ->whereDate('created_at', '<=', $endDate)
+            ->where(DB::raw('DATE(created_at)'), '>=', $startDate)
+            ->where(DB::raw('DATE(created_at)'), '<=', $endDate)
             ->sum('total');
 
-        $totalExpenses = Expense::whereDate('date', '>=', $startDate)
-            ->whereDate('date', '<=', $endDate)
+
+        $totalExpenses = Expense::query()->where('date', '>=', $startDate)
+            ->where('date', '<=', $endDate)
             ->sum('amount');
 
         $grossProfit = $totalRevenue - $totalExpenses;
 
         // Daily revenue
         $dailyRevenue = Transaction::lunas()
-            ->whereDate('created_at', '>=', $startDate)
-            ->whereDate('created_at', '<=', $endDate)
+            ->where(DB::raw('DATE(created_at)'), '>=', $startDate)
+            ->where(DB::raw('DATE(created_at)'), '<=', $endDate)
             ->select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(total) as total'))
             ->groupBy('date')
             ->orderBy('date')
             ->get();
 
         // Daily expenses
-        $dailyExpenses = Expense::whereDate('date', '>=', $startDate)
-            ->whereDate('date', '<=', $endDate)
+        $dailyExpenses = Expense::query()->where('date', '>=', $startDate)
+            ->where('date', '<=', $endDate)
             ->select('date', DB::raw('SUM(amount) as total'))
             ->groupBy('date')
             ->orderBy('date')
             ->get();
 
+
+
         // Payment methods
         $paymentMethods = Transaction::lunas()
-            ->whereDate('created_at', '>=', $startDate)
-            ->whereDate('created_at', '<=', $endDate)
+            ->where(DB::raw('DATE(created_at)'), '>=', $startDate)
+            ->where(DB::raw('DATE(created_at)'), '<=', $endDate)
             ->select('payment_method', DB::raw('COUNT(*) as count'))
             ->groupBy('payment_method')
             ->get();
+
 
         return response()->json([
             'summary' => [

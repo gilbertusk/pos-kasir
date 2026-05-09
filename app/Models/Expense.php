@@ -5,7 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property \Illuminate\Support\Carbon $date
+ * @property string $category
+ * @property string $description
+ * @property float $amount
+ * @property string|null $attachment
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Expense query()
+ */
 class Expense extends Model
+
 {
     use HasFactory;
 
@@ -28,13 +41,14 @@ class Expense extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function scopeByCategory($query, $category)
+    public function scopeByCategory(\Illuminate\Database\Eloquent\Builder $query, string $category)
     {
         if ($category && $category !== 'semua') {
             return $query->where('category', $category);
         }
         return $query;
     }
+
 
     public static function getCategoryBadgeColor(string $category): string
     {
