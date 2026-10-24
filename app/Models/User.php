@@ -67,4 +67,21 @@ class User extends Authenticatable
     {
         return $this->hasMany(Expense::class);
     }
+
+    /**
+     * Whether the user has recorded sales or expenses that must be preserved.
+     */
+    public function hasActivityHistory(): bool
+    {
+        return $this->transactions()->exists() || $this->expenses()->exists();
+    }
+
+    /**
+     * Whether this user is the only active owner left in the store.
+     */
+    public function isLastActiveOwner(): bool
+    {
+        return $this->isOwner()
+            && ! static::where('role', 'owner')->where('is_active', true)->whereKeyNot($this->getKey())->exists();
+    }
 }

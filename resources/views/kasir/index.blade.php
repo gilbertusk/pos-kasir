@@ -258,6 +258,9 @@
 
             async submitTransaction() {
                 if (this.cart.length === 0) return;
+                if (this.discountPercent < 0 || this.discountPercent > this.maxDiscount) {
+                    alert(`Diskon harus antara 0 dan ${this.maxDiscount}%.`); return;
+                }
                 if (this.paymentMethod === 'tunai' && this.paidAmount < this.total) {
                     alert('Uang yang diterima kurang!'); return;
                 }
@@ -269,8 +272,7 @@
                         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
                         body: JSON.stringify({
                             items: this.cart.map(i => ({ product_id: i.product_id, quantity: i.quantity })),
-                            discount_percent: this.discountPercent,
-                            tax_percent: this.taxEnabled ? this.taxPercent : 0,
+                            discount_percent: this.discountPercent || 0,
                             payment_method: this.paymentMethod,
                             paid_amount: paid,
                         })

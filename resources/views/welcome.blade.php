@@ -33,12 +33,9 @@
                 </div>
                 <div class="flex items-center gap-6">
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="btn-primary !py-2.5 px-6">Buka Dashboard</a>
+                        <a href="{{ route('kasir.index') }}" class="btn-primary !py-2.5 px-6">Buka Kasir</a>
                     @else
-                        <a href="{{ route('login') }}" class="text-sm font-bold text-slate-600 hover:text-primary-600 transition-colors">Masuk</a>
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="btn-primary !py-2.5 px-6">Daftar Sekarang</a>
-                        @endif
+                        <a href="{{ route('login') }}" class="btn-primary !py-2.5 px-6">Masuk</a>
                     @endauth
                 </div>
             </div>
@@ -59,7 +56,7 @@
                             Sistem kasir modern yang dirancang khusus untuk mempercepat transaksi, mengelola stok secara real-time, dan memberikan laporan bisnis yang akurat.
                         </p>
                         <div class="flex flex-col sm:flex-row gap-4">
-                            <a href="{{ route('register') }}" class="btn-primary !py-4 px-8 text-sm">Coba Gratis Sekarang →</a>
+                            <a href="{{ route('login') }}" class="btn-primary !py-4 px-8 text-sm">Masuk Sekarang →</a>
                             <a href="#features" class="btn-secondary !py-4 px-8 text-sm">Pelajari Fitur</a>
                         </div>
                     </div>

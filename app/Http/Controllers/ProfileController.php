@@ -48,6 +48,18 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        if ($user->hasActivityHistory()) {
+            return back()->withErrors([
+                'password' => 'Akun yang sudah memiliki riwayat transaksi atau pengeluaran tidak bisa dihapus. Minta owner menonaktifkannya.',
+            ], 'userDeletion');
+        }
+
+        if ($user->isLastActiveOwner()) {
+            return back()->withErrors([
+                'password' => 'Owner terakhir tidak bisa menghapus akunnya sendiri.',
+            ], 'userDeletion');
+        }
+
         Auth::logout();
 
         $user->delete();

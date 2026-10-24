@@ -84,6 +84,13 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
+        if ($product->transactionItems()->exists()) {
+            return redirect()->route('products.index')->with(
+                'error',
+                'Barang sudah memiliki riwayat transaksi sehingga tidak bisa dihapus. Nonaktifkan saja agar tidak tampil di kasir.'
+            );
+        }
+
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Barang berhasil dihapus!');
     }

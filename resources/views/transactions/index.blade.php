@@ -1,7 +1,8 @@
 <x-app-layout>
     @section('title', 'Riwayat Transaksi')
-    <div x-data="{ showDetail: false, detailData: null }">
-        {{-- Summary Cards --}}
+    <div x-data="transactionsPage()">
+        {{-- Summary Cards (store-wide figures, owner only) --}}
+        @if(Auth::user()->isOwner())
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div class="card p-6 flex items-center gap-5">
                 <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center border border-indigo-100"><svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg></div>
@@ -16,6 +17,7 @@
                 <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Laba Kotor</p><p class="text-3xl font-black text-amber-600 leading-none">{{ formatRupiah($grossProfit) }}</p></div>
             </div>
         </div>
+        @endif
 
         {{-- Filters --}}
         <div class="card p-4 mb-4">
@@ -118,14 +120,24 @@
     </div>
 
     <script>
-    function fetchDetail(id) {
-        fetch(`/transactions/${id}`, { headers: { 'Accept': 'application/json' } })
-            .then(r => r.json())
-            .then(data => {
-                Alpine.store('detail', data);
-                document.querySelector('[x-data]').__x.$data.detailData = data;
-                document.querySelector('[x-data]').__x.$data.showDetail = true;
-            });
+    function transactionsPage() {
+        return {
+            showDetail: false,
+            detailData: null,
+
+            async fetchDetail(id) {
+                try {
+                    const res = await fetch(`/transactions/${id}`, { headers: { 'Accept': 'application/json' } });
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    this.detailData = await res.json();
+                    this.showDetail = true;
+                } catch (e) {
+                    alert('Gagal memuat detail transaksi. Silakan coba lagi.');
+                }
+            },
+
+            formatRupiah(n) { return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); },
+        };
     }
     </script>
 </x-app-layout>

@@ -98,6 +98,11 @@ class SettingController extends Controller
             'password' => 'nullable|string|min:6',
         ]);
 
+        // Keeps at least one owner (the one making the change) able to manage the store.
+        if ($user->is($request->user()) && $request->role !== $user->role) {
+            return redirect()->route('settings.index')->with('error', 'Anda tidak bisa mengubah role akun Anda sendiri.');
+        }
+
         $data = [
             'name' => $request->name,
             'email' => $request->email,
@@ -113,14 +118,29 @@ class SettingController extends Controller
         return redirect()->route('settings.index')->with('success', 'Pengguna berhasil diperbarui!');
     }
 
-    public function toggleUser(User $user)
+    public function toggleUser(Request $request, User $user)
     {
+        if ($user->is($request->user())) {
+            return redirect()->route('settings.index')->with('error', 'Anda tidak bisa menonaktifkan akun Anda sendiri.');
+        }
+
         $user->update(['is_active' => !$user->is_active]);
         return redirect()->route('settings.index')->with('success', 'Status pengguna berhasil diubah!');
     }
 
-    public function destroyUser(User $user)
+    public function destroyUser(Request $request, User $user)
     {
+        if ($user->is($request->user())) {
+            return redirect()->route('settings.index')->with('error', 'Anda tidak bisa menghapus akun Anda sendiri.');
+        }
+
+        if ($user->hasActivityHistory()) {
+            return redirect()->route('settings.index')->with(
+                'error',
+                'Pengguna sudah memiliki riwayat transaksi atau pengeluaran sehingga tidak bisa dihapus. Nonaktifkan saja.'
+            );
+        }
+
         $user->delete();
         return redirect()->route('settings.index')->with('success', 'Pengguna berhasil dihapus!');
     }
