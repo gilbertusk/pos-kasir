@@ -1,59 +1,270 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# G Pos — Sistem Kasir untuk Usaha Makanan
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+G Pos adalah aplikasi kasir (point of sale) berbasis web untuk warung, rumah makan, dan kafe. Kasir bisa mencatat pesanan dengan cepat dari laptop, tablet, maupun ponsel, sementara owner memantau stok, transaksi, pengeluaran, dan laporan penjualan dari satu tempat.
 
-## About Laravel
+Dibangun dengan Laravel 12, Blade, Alpine.js, dan Tailwind CSS.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Daftar isi
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- [Fitur](#fitur)
+- [Hak akses per role](#hak-akses-per-role)
+- [Teknologi](#teknologi)
+- [Kebutuhan sistem](#kebutuhan-sistem)
+- [Instalasi](#instalasi)
+- [Akun demo](#akun-demo)
+- [Konfigurasi](#konfigurasi)
+- [Menjalankan test](#menjalankan-test)
+- [Struktur project](#struktur-project)
+- [Desain dan palet warna](#desain-dan-palet-warna)
+- [Deploy](#deploy)
+- [Keamanan](#keamanan)
+- [Lisensi](#lisensi)
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Fitur
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Kasir
+- Grid menu dengan foto, harga, dan sisa stok; filter kategori (makanan, minuman, lainnya) dan pencarian nama atau kode.
+- Keranjang dengan jumlah per item, diskon persen (dibatasi maksimal sesuai pengaturan), dan PPN otomatis.
+- Pembayaran tunai, QRIS, atau debit. Untuk tunai tersedia tombol uang pas, saran nominal, dan hitung kembalian.
+- Struk langsung tampil setelah bayar dan bisa dicetak.
+- Tampilan menyesuaikan layar: kolom pesanan di desktop, panel pesanan dari bawah di tablet dan ponsel.
 
-## Laravel Sponsors
+### Inventaris
+- Tambah, ubah, hapus, dan aktif/nonaktifkan barang, lengkap dengan foto.
+- Peringatan stok menipis (stok ≤ stok minimum).
+- Barang yang sudah pernah terjual tidak bisa dihapus agar riwayat penjualan tetap utuh; cukup dinonaktifkan.
+- Ekspor daftar barang ke PDF.
+- AI Assistant (Gemini) untuk menanyakan kondisi stok dan rekomendasi restock. Lihat [docs/ai-assistant-gemini.md](docs/ai-assistant-gemini.md).
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Transaksi
+- Riwayat transaksi dengan filter tanggal dan pencarian nomor transaksi atau nama kasir.
+- Detail transaksi dan cetak ulang struk.
+- Pembatalan transaksi (owner) yang otomatis mengembalikan stok.
 
-### Premium Partners
+### Laporan dan pengeluaran
+- Ringkasan pendapatan, pengeluaran, dan laba kotor per rentang tanggal.
+- Grafik pendapatan harian, pengeluaran harian, perbandingan keduanya, dan komposisi metode pembayaran.
+- Pencatatan pengeluaran (listrik, gaji, perlengkapan, sewa) dengan lampiran bukti.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Pengaturan
+- Profil toko (nama, alamat, telepon, WhatsApp, NPWP, logo). Nama toko tampil di struk dan sidebar.
+- Pajak dan diskon: aktif/nonaktif PPN, persentase PPN, batas diskon maksimal.
+- Manajemen pengguna: tambah akun owner/kasir dan nonaktifkan akun. Akun yang dinonaktifkan langsung tidak bisa login.
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Hak akses per role
 
-## Code of Conduct
+| Halaman / aksi | Owner | Kasir |
+| --- | :---: | :---: |
+| Kasir (mencatat penjualan) | ✓ | ✓ |
+| Riwayat transaksi, detail, cetak struk | ✓ | ✓ |
+| Ringkasan laba di halaman transaksi | ✓ | – |
+| Batalkan transaksi | ✓ | – |
+| Inventaris, ekspor PDF, AI Assistant | ✓ | – |
+| Analitik / laporan | ✓ | – |
+| Pengeluaran | ✓ | – |
+| Pengaturan dan manajemen pengguna | ✓ | – |
+| Profil sendiri | ✓ | ✓ |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Pendaftaran akun publik dinonaktifkan. Akun baru hanya dibuat oleh owner melalui **Pengaturan → Pengguna**.
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Teknologi
 
-## License
+| Lapisan | Teknologi |
+| --- | --- |
+| Backend | PHP 8.2+, Laravel 12, Laravel Breeze (autentikasi) |
+| Database | MySQL / MariaDB (SQLite in-memory untuk test) |
+| Frontend | Blade, Alpine.js 3, Tailwind CSS 3, Chart.js 4 |
+| Build | Vite 7 |
+| PDF | barryvdh/laravel-dompdf |
+| AI | Google Gemini API (opsional) |
+| Test | PHPUnit 11 |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## Kebutuhan sistem
+
+- PHP 8.2 atau lebih baru dengan ekstensi `pdo_mysql`, `mbstring`, `openssl`, `gd`, `zip`
+- Composer 2
+- Node.js 18+ dan npm
+- MySQL 8 / MariaDB 10.4+ (misalnya dari XAMPP atau Laragon)
+
+---
+
+## Instalasi
+
+```bash
+# 1. Clone repository
+git clone https://github.com/gilbertusk/pos-kasir.git
+cd pos-kasir
+
+# 2. Install dependency PHP dan JavaScript
+composer install
+npm install
+
+# 3. Siapkan file environment
+cp .env.example .env
+php artisan key:generate
+```
+
+Buat database kosong (misalnya `pos_kasir_makanan`), lalu sesuaikan `.env`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=pos_kasir_makanan
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Lanjutkan:
+
+```bash
+# 4. Buat tabel dan isi data contoh (menu, transaksi, pengaturan, akun demo)
+php artisan migrate --seed
+
+# 5. Hubungkan folder upload agar foto produk bisa diakses
+php artisan storage:link
+
+# 6. Build aset frontend
+npm run build
+
+# 7. Jalankan aplikasi
+php artisan serve
+```
+
+Buka `http://localhost:8000`. Saat mengubah tampilan, jalankan `npm run dev` di terminal terpisah agar perubahan CSS/JS langsung terlihat.
+
+> Foto contoh menu dibaca dari `storage/app/public/products/`. Jika foto tidak muncul, pastikan langkah 5 sudah dijalankan.
+
+---
+
+## Akun demo
+
+Seeder membuat dua akun untuk mencoba aplikasi:
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Owner | `owner@pos.com` | `password` |
+| Kasir | `kasir@pos.com` | `password` |
+
+**Ganti password atau hapus akun demo ini sebelum aplikasi dipakai sungguhan.**
+
+---
+
+## Konfigurasi
+
+Variabel penting di `.env`:
+
+| Variabel | Fungsi | Contoh |
+| --- | --- | --- |
+| `APP_NAME` | Nama aplikasi di judul tab, sidebar, dan halaman login | `"G Pos"` |
+| `APP_TIMEZONE` | Zona waktu pencatatan transaksi dan struk | `Asia/Jakarta` |
+| `APP_URL` | URL aplikasi | `http://localhost:8000` |
+| `DB_*` | Koneksi database | lihat [Instalasi](#instalasi) |
+| `GEMINI_API_KEY` | API key untuk AI Assistant (opsional) | dari [Google AI Studio](https://aistudio.google.com/) |
+| `GEMINI_MODEL` | Model Gemini yang dipakai | `gemini-2.5-flash-lite` |
+
+Nama toko, pajak, dan batas diskon diatur dari halaman **Pengaturan** di dalam aplikasi, bukan dari `.env`.
+
+---
+
+## Menjalankan test
+
+Test memakai SQLite in-memory, jadi tidak menyentuh database lokal Anda.
+
+```bash
+php artisan test
+```
+
+Cakupan test utama:
+
+| File | Yang diuji |
+| --- | --- |
+| `tests/Feature/CheckoutTest.php` | Perhitungan total, diskon, PPN dari pengaturan, uang kurang ditolak, stok tidak cukup, barang nonaktif |
+| `tests/Feature/RoleAccessTest.php` | Pembatasan halaman owner vs kasir |
+| `tests/Feature/ProductManagementTest.php` | Hapus barang aman untuk riwayat, toggle status, pesan validasi tampil |
+| `tests/Feature/UserManagementTest.php` | Proteksi hapus/nonaktifkan akun sendiri dan akun yang punya riwayat |
+| `tests/Feature/TransactionTest.php` | Detail transaksi, pembatalan dan pengembalian stok |
+| `tests/Feature/Auth/*` | Login, akun nonaktif, registrasi dinonaktifkan, reset password |
+
+---
+
+## Struktur project
+
+```
+app/
+├── Http/
+│   ├── Controllers/        # Kasir, Product, Transaction, Report, Expense, Setting, AiAssistant
+│   ├── Middleware/         # EnsureUserHasRole (role:owner), EnsureUserIsActive
+│   └── Requests/Auth/      # LoginRequest (menolak akun nonaktif)
+├── Models/                 # Product, Transaction, TransactionItem, Expense, Setting, User
+└── Helpers/helpers.php     # formatRupiah()
+database/
+├── migrations/             # Skema tabel + proteksi foreign key riwayat penjualan
+├── factories/              # UserFactory, ProductFactory (untuk test)
+└── seeders/                # Data contoh dan akun demo
+resources/
+├── css/app.css             # Komponen dasar (tombol, input, kartu)
+└── views/                  # Blade: kasir, products, transactions, reports, expenses, settings
+routes/web.php              # Rute aplikasi, dikelompokkan per role
+tailwind.config.js          # Token warna palet Blirik
+docs/                       # Panduan AI Assistant dan deploy InfinityFree
+deploy/                     # Skrip bantu deploy shared hosting (jangan taruh di public/)
+tests/Feature/              # Test fitur
+```
+
+---
+
+## Desain dan palet warna
+
+Tampilan memakai palet **Blirik**, terinspirasi piring dan gelas enamel hijau-putih khas warung. Semua warna didefinisikan sekali di [`tailwind.config.js`](tailwind.config.js), jadi mengganti palet cukup di satu file.
+
+| Token | Warna | Dipakai untuk |
+| --- | --- | --- |
+| `brand` (hijau blirik) | `#1F4D3A` | Sidebar, navigasi, tombol utama, status lunas |
+| `kunyit` | `#F2B33D` | Tombol **Bayar**, peringatan stok menipis |
+| `enamel` | `#F6F7F3` – `#1B2620` | Latar, permukaan, garis, teks |
+| `sambal` | `#B42318` | Hanya untuk bahaya: stok habis, error, hapus |
+
+Font: [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans). Angka rupiah memakai `tabular-nums` agar sejajar.
+
+Setelah mengubah view atau `tailwind.config.js`, jalankan `npm run build` sebelum deploy.
+
+---
+
+## Deploy
+
+Panduan lengkap untuk shared hosting gratis (InfinityFree) ada di [docs/deploy-infinityfree.md](docs/deploy-infinityfree.md). Ringkasnya:
+
+```bash
+npm run build
+composer install --no-dev --optimize-autoloader
+```
+
+Lalu unggah file, impor database, sesuaikan `.env` di server (`APP_ENV=production`, `APP_DEBUG=false`), dan buat symlink storage.
+
+Untuk server dengan akses SSH, cukup jalankan `php artisan migrate --force`, `php artisan storage:link`, dan `php artisan config:cache` setelah upload.
+
+---
+
+## Keamanan
+
+- Jangan pernah meng-commit `.env`, file `.env.*` berisi kredensial, dump database, atau arsip ZIP berisi project. Semuanya sudah dimasukkan ke `.gitignore`.
+- Matikan `APP_DEBUG` di production.
+- Skrip di folder `deploy/` bisa dijalankan siapa saja tanpa login; salin ke server hanya saat dibutuhkan dan langsung hapus setelahnya.
+- Ganti atau hapus akun demo sebelum dipakai untuk usaha sungguhan.
+
+---
+
+## Lisensi
+
+Dirilis di bawah lisensi [MIT](https://opensource.org/licenses/MIT).

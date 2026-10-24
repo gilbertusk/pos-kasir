@@ -22,3 +22,10 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Local deployment artifacts — contain credentials or customer data, never commit
+.env.*
+!.env.example
+*.sql
+*.zip
+.antigravitycli/
