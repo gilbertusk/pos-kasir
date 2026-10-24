@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Indigo POS - Modern Point of Sale System</title>
+        <title>{{ config('app.name') }} - Sistem kasir modern</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -11,8 +11,8 @@
         <style>
             [x-cloak] { display: none !important; }
             .hero-gradient {
-                background: radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.05) 0%, transparent 50%),
-                            radial-gradient(circle at 100% 100%, rgba(79, 70, 229, 0.05) 0%, transparent 50%);
+                background: radial-gradient(circle at 0% 0%, rgba(249, 115, 22, 0.05) 0%, transparent 50%),
+                            radial-gradient(circle at 100% 100%, rgba(220, 38, 38, 0.05) 0%, transparent 50%);
             }
             .floating { animation: float 6s ease-in-out infinite; }
             @keyframes float {
@@ -21,15 +21,15 @@
             }
         </style>
     </head>
-    <body class="antialiased text-slate-800 bg-slate-50 selection:bg-primary-100 selection:text-primary-900 overflow-x-hidden">
+    <body class="antialiased text-slate-800 bg-enamel-50 selection:bg-primary-100 selection:text-primary-900 overflow-x-hidden">
         {{-- Navbar --}}
-        <nav class="fixed top-0 left-0 w-full z-50 glass border-b border-slate-100 h-20">
+        <nav class="fixed top-0 left-0 w-full z-50 glass border-b border-orange-100 h-20">
             <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-200">
+                    <div class="w-10 h-10 bg-brand-800 rounded-xl flex items-center justify-center shadow-lg shadow-orange-300/30">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </div>
-                    <span class="text-xl font-black tracking-tight">Indigo <span class="text-primary-600">POS</span></span>
+                    <span class="text-xl font-black tracking-tight">G <span class="text-primary-600">Pos</span></span>
                 </div>
                 <div class="flex items-center gap-6">
                     @auth
@@ -46,7 +46,7 @@
             <section class="relative py-24 lg:py-32 overflow-hidden hero-gradient">
                 <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
                     <div class="relative z-10">
-                        <span class="inline-flex items-center px-4 py-1.5 rounded-full bg-primary-50 border border-primary-100 text-primary-600 text-xs font-black uppercase tracking-widest mb-6">
+                        <span class="inline-flex items-center px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-primary-600 text-xs font-black uppercase tracking-widest mb-6">
                             🚀 Generasi Baru POS System
                         </span>
                         <h1 class="text-5xl lg:text-7xl font-black text-slate-900 leading-[1.1] mb-8">
@@ -56,7 +56,7 @@
                             Sistem kasir modern yang dirancang khusus untuk mempercepat transaksi, mengelola stok secara real-time, dan memberikan laporan bisnis yang akurat.
                         </p>
                         <div class="flex flex-col sm:flex-row gap-4">
-                            <a href="{{ route('login') }}" class="btn-primary !py-4 px-8 text-sm">Masuk Sekarang →</a>
+                            <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-8 py-4 bg-brand-800 hover:bg-brand-900 text-white font-extrabold text-sm rounded-xl transition-all duration-300 shadow-xl shadow-orange-500/20">Masuk Sekarang →</a>
                             <a href="#features" class="btn-secondary !py-4 px-8 text-sm">Pelajari Fitur</a>
                         </div>
                     </div>
@@ -71,12 +71,12 @@
                                             <div class="w-24 h-3 bg-slate-200 rounded-full"></div>
                                             <div class="w-16 h-3 bg-slate-100 rounded-full"></div>
                                         </div>
-                                        <div class="w-10 h-10 bg-primary-100 rounded-xl"></div>
+                                        <div class="w-10 h-10 bg-orange-100 rounded-xl"></div>
                                     </div>
                                     <div class="space-y-4">
                                         <div class="flex justify-between items-center p-3 bg-white rounded-2xl border border-slate-50 shadow-sm">
                                             <div class="flex items-center gap-3">
-                                                <div class="w-8 h-8 bg-indigo-50 rounded-lg"></div>
+                                                <div class="w-8 h-8 bg-orange-50 rounded-lg"></div>
                                                 <div class="w-20 h-2 bg-slate-100 rounded-full"></div>
                                             </div>
                                             <div class="w-12 h-2 bg-primary-500 rounded-full"></div>
@@ -118,8 +118,8 @@
                         <p class="text-slate-500 font-medium">Semua yang Anda butuhkan untuk menjalankan operasional bisnis dalam satu platform yang terintegrasi.</p>
                     </div>
                     <div class="grid md:grid-cols-3 gap-8">
-                        <div class="card p-8 group hover:border-primary-200 transition-all">
-                            <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-primary-600 mb-6 group-hover:scale-110 transition-transform">
+                        <div class="card p-8 group hover:border-orange-200 transition-all">
+                            <div class="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center text-primary-600 mb-6 group-hover:scale-110 transition-transform">
                                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                             </div>
                             <h3 class="text-xl font-black text-slate-900 mb-4">Kasir Super Cepat</h3>
@@ -146,7 +146,7 @@
             {{-- Footer --}}
             <footer class="py-12 bg-slate-50 border-t border-slate-100">
                 <div class="max-w-7xl mx-auto px-6 text-center">
-                    <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">&copy; {{ date('Y') }} Indigo POS System. Built for speed and elegance.</p>
+                    <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">&copy; {{ date('Y') }} {{ config('app.name') }}. Built for speed and elegance.</p>
                 </div>
             </footer>
         </main>

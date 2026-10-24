@@ -18,19 +18,19 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div class="card p-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center border border-indigo-100"><svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
-                <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Transaksi</p><p class="text-2xl font-black text-slate-900 leading-none" x-text="summary.total_transactions"></p></div>
+                <div><p class="text-xs font-medium text-slate-400 mb-1">Total transaksi</p><p class="text-2xl font-bold text-slate-900 leading-none" x-text="summary.total_transactions"></p></div>
             </div>
             <div class="card p-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center border border-emerald-100"><svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-                <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Pendapatan</p><p class="text-2xl font-black text-emerald-600 leading-none" x-text="formatRp(summary.total_revenue)"></p></div>
+                <div><p class="text-xs font-medium text-slate-400 mb-1">Total pendapatan</p><p class="tabular text-2xl font-bold text-emerald-600 leading-none" x-text="formatRp(summary.total_revenue)"></p></div>
             </div>
             <div class="card p-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center border border-rose-100"><svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg></div>
-                <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Pengeluaran</p><p class="text-2xl font-black text-rose-600 leading-none" x-text="formatRp(summary.total_expenses)"></p></div>
+                <div><p class="text-xs font-medium text-slate-400 mb-1">Total pengeluaran</p><p class="tabular text-2xl font-bold text-rose-600 leading-none" x-text="formatRp(summary.total_expenses)"></p></div>
             </div>
             <div class="card p-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center border border-amber-100"><svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
-                <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Laba Kotor</p><p class="text-2xl font-black text-amber-600 leading-none" x-text="formatRp(summary.gross_profit)"></p></div>
+                <div><p class="text-xs font-medium text-slate-400 mb-1">Laba kotor</p><p class="tabular text-2xl font-bold text-amber-600 leading-none" x-text="formatRp(summary.gross_profit)"></p></div>
             </div>
         </div>
 
@@ -43,38 +43,38 @@
 
         {{-- Charts --}}
         <div class="card p-8 mb-8" x-show="activeTab === 'pendapatan' || activeTab === 'pengeluaran'">
-            <h3 class="text-sm font-black text-slate-400 uppercase tracking-widest mb-6" x-text="activeTab === 'pendapatan' ? 'Grafik Pendapatan Harian' : 'Grafik Pengeluaran Harian'"></h3>
+            <h3 class="text-sm font-bold text-slate-400 mb-6" x-text="activeTab === 'pendapatan' ? 'Pendapatan harian' : 'Pengeluaran harian'"></h3>
             <canvas id="lineChart" height="100"></canvas>
         </div>
 
         <div x-show="activeTab === 'perbandingan'" class="card p-8 mb-8">
-            <h3 class="text-sm font-black text-slate-400 uppercase tracking-widest mb-6">Perbandingan Pendapatan vs Pengeluaran</h3>
+            <h3 class="text-sm font-bold text-slate-400 mb-6">Pendapatan vs pengeluaran</h3>
             <canvas id="barChart" height="100"></canvas>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
             <div class="card p-8">
-                <h3 class="text-sm font-black text-slate-400 uppercase tracking-widest mb-6">Metode Pembayaran</h3>
+                <h3 class="text-sm font-bold text-slate-400 mb-6">Metode pembayaran</h3>
                 <canvas id="donutChart" height="200"></canvas>
             </div>
             <div class="card p-8">
-                <h3 class="text-sm font-black text-slate-400 uppercase tracking-widest mb-6">Ringkasan Angka</h3>
+                <h3 class="text-sm font-bold text-slate-400 mb-6">Ringkasan angka</h3>
                 <div class="space-y-4">
                     <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                        <span class="text-sm font-bold text-slate-500 uppercase tracking-tighter">Total Transaksi</span>
-                        <span class="text-xl font-black text-slate-900" x-text="summary.total_transactions"></span>
+                        <span class="text-sm font-bold text-slate-500">Total transaksi</span>
+                        <span class="text-xl font-bold text-slate-900" x-text="summary.total_transactions"></span>
                     </div>
                     <div class="flex justify-between items-center p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
-                        <span class="text-sm font-bold text-emerald-600 uppercase tracking-tighter">Total Pendapatan</span>
-                        <span class="text-xl font-black text-emerald-600" x-text="formatRp(summary.total_revenue)"></span>
+                        <span class="text-sm font-bold text-emerald-600">Total pendapatan</span>
+                        <span class="tabular text-xl font-bold text-emerald-600" x-text="formatRp(summary.total_revenue)"></span>
                     </div>
                     <div class="flex justify-between items-center p-4 bg-rose-50 rounded-2xl border border-rose-100">
-                        <span class="text-sm font-bold text-rose-600 uppercase tracking-tighter">Total Pengeluaran</span>
-                        <span class="text-xl font-black text-rose-600" x-text="formatRp(summary.total_expenses)"></span>
+                        <span class="text-sm font-bold text-rose-600">Total pengeluaran</span>
+                        <span class="tabular text-xl font-bold text-rose-600" x-text="formatRp(summary.total_expenses)"></span>
                     </div>
                     <div class="flex justify-between items-center p-4 bg-amber-50 rounded-2xl border border-amber-100">
-                        <span class="text-sm font-bold text-amber-600 uppercase tracking-tighter">Laba Kotor</span>
-                        <span class="text-xl font-black text-amber-600" x-text="formatRp(summary.gross_profit)"></span>
+                        <span class="text-sm font-bold text-amber-600">Laba kotor</span>
+                        <span class="tabular text-xl font-bold text-amber-600" x-text="formatRp(summary.gross_profit)"></span>
                     </div>
                 </div>
             </div>
@@ -113,7 +113,7 @@
                 if (lineCtx) {
                     this.charts.line = new Chart(lineCtx, {
                         type: 'line',
-                        data: { labels, datasets: [{ label: 'Pendapatan', data: revenueData, borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.1)', fill: true, tension: 0.4, pointRadius: 5 }] },
+                        data: { labels, datasets: [{ label: 'Pendapatan', data: revenueData, borderColor: '#1F4D3A', backgroundColor: 'rgba(31,77,58,0.08)', fill: true, tension: 0.4, pointRadius: 5 }] },
                         options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => 'Rp ' + (v/1000).toLocaleString('id-ID') + 'k' } } } }
                     });
                 }
@@ -125,8 +125,8 @@
                     this.charts.bar = new Chart(barCtx, {
                         type: 'bar',
                         data: { labels: allLabels, datasets: [
-                            { label: 'Pendapatan', data: allLabels.map(l => { const found = data.daily_revenue.find(d => new Date(d.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) === l); return found ? found.total : 0; }), backgroundColor: '#6366f1' },
-                            { label: 'Pengeluaran', data: allLabels.map(l => { const found = data.daily_expenses.find(d => new Date(d.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) === l); return found ? found.total : 0; }), backgroundColor: '#f43f5e' }
+                            { label: 'Pendapatan', data: allLabels.map(l => { const found = data.daily_revenue.find(d => new Date(d.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) === l); return found ? found.total : 0; }), backgroundColor: '#1F4D3A' },
+                            { label: 'Pengeluaran', data: allLabels.map(l => { const found = data.daily_expenses.find(d => new Date(d.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) === l); return found ? found.total : 0; }), backgroundColor: '#B42318' }
                         ] },
                         options: { responsive: true, scales: { y: { beginAtZero: true } } }
                     });
@@ -140,7 +140,7 @@
                     const pmTotal = pmData.reduce((a, b) => a + b, 0);
                     this.charts.donut = new Chart(donutCtx, {
                         type: 'doughnut',
-                        data: { labels: pmLabels, datasets: [{ data: pmData, backgroundColor: ['#10b981', '#f59e0b', '#6366f1'] }] },
+                        data: { labels: pmLabels, datasets: [{ data: pmData, backgroundColor: ['#1F4D3A', '#F2B33D', '#8DB9A0'] }] },
                         options: { responsive: true, plugins: { legend: { position: 'right', labels: { generateLabels: (chart) => chart.data.labels.map((l, i) => ({ text: `${l}  ${pmData[i]} (${(pmData[i]/pmTotal*100).toFixed(1)}%)`, fillStyle: chart.data.datasets[0].backgroundColor[i], index: i })) } } } }
                     });
                 }

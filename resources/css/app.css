@@ -6,38 +6,57 @@
 
 @layer base {
     body {
-        @apply font-sans antialiased bg-slate-50 text-slate-900;
-        font-family: 'Plus Jakarta Sans', sans-serif;
+        @apply font-sans antialiased bg-enamel-50 text-ink;
+        font-family: "Plus Jakarta Sans", sans-serif;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    /* Money and quantities line up in columns. */
+    .tabular {
+        font-variant-numeric: tabular-nums;
     }
 }
 
 @layer components {
+    /* Primary actions on regular pages (save, add). The kasir "Bayar" uses .btn-cta instead. */
     .btn-primary {
-        @apply inline-flex items-center justify-center px-6 py-3 bg-primary-600 border border-transparent rounded-xl font-extrabold text-xs text-white uppercase tracking-[0.1em] hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-500/20 transition-all duration-300 active:scale-95 shadow-xl shadow-primary-600/20;
+        @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-transparent bg-brand-800 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+    }
+
+    /* The single most important action on a screen. Dark ink on kunyit keeps 8:1 contrast. */
+    .btn-cta {
+        @apply inline-flex min-h-[56px] items-center justify-center gap-2 rounded-xl border border-kunyit-500 bg-kunyit-400 px-5 py-3 text-base font-bold text-ink transition-colors hover:bg-kunyit-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-kunyit-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:border-enamel-200 disabled:bg-enamel-100 disabled:text-enamel-400;
     }
 
     .btn-danger {
-        @apply inline-flex items-center justify-center px-6 py-3 bg-rose-600 border border-transparent rounded-xl font-extrabold text-xs text-white uppercase tracking-[0.1em] hover:bg-rose-700 focus:outline-none focus:ring-4 focus:ring-rose-500/20 transition-all duration-300 active:scale-95 shadow-xl shadow-rose-600/20;
+        @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-transparent bg-sambal-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-sambal-800 focus:outline-none focus-visible:ring-4 focus-visible:ring-sambal-200 active:scale-[0.98];
     }
 
     .btn-secondary {
-        @apply inline-flex items-center justify-center px-6 py-3 bg-white border border-slate-200 rounded-xl font-extrabold text-xs text-slate-600 uppercase tracking-[0.1em] hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 focus:outline-none focus:ring-4 focus:ring-slate-500/10 transition-all duration-300 active:scale-95 shadow-sm;
+        @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-enamel-200 bg-white px-5 py-2.5 text-sm font-semibold text-enamel-700 transition-colors hover:border-enamel-300 hover:bg-enamel-50 hover:text-ink focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
     }
 
     .btn-success {
-        @apply inline-flex items-center justify-center px-6 py-3 bg-emerald-600 border border-transparent rounded-xl font-extrabold text-xs text-white uppercase tracking-[0.1em] hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 transition-all duration-300 active:scale-95 shadow-xl shadow-emerald-600/20;
+        @apply btn-primary;
     }
 
     .input-field {
-        @apply w-full rounded-xl border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-700 shadow-sm transition-all duration-300 placeholder:text-slate-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 focus:shadow-lg focus:shadow-primary-500/5;
+        @apply w-full rounded-xl border-enamel-200 bg-white px-4 py-2.5 text-sm text-ink transition-colors placeholder:text-enamel-400 focus:border-brand-600 focus:ring-4 focus:ring-brand-100;
+    }
+
+    .field-label {
+        @apply mb-1.5 block text-[13px] font-medium text-enamel-500;
     }
 
     .card {
-        @apply bg-white rounded-3xl border border-slate-200/50 shadow-[0_8px_40px_rgb(0,0,0,0.03)] overflow-hidden transition-all duration-300;
+        @apply overflow-hidden rounded-2xl border border-enamel-200 bg-white;
     }
 
     .glass {
-        @apply bg-white/70 backdrop-blur-md border border-white/20;
+        @apply border border-white/20 bg-white/70 backdrop-blur-md;
     }
 }
 
@@ -62,6 +81,6 @@
 /* Scrollbar styling */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { @apply bg-transparent; }
-::-webkit-scrollbar-thumb { @apply bg-slate-200 rounded-full hover:bg-slate-300; }
+::-webkit-scrollbar-thumb { @apply bg-enamel-200 rounded-full hover:bg-enamel-300; }
 
 

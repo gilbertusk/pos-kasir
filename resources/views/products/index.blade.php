@@ -12,8 +12,8 @@
 
         {{-- Low Stock Alert --}}
         @if($lowStockCount > 0)
-        <div class="flex items-center gap-3 p-4 mb-6 bg-rose-50 border border-rose-100 rounded-2xl text-rose-700 text-sm font-bold shadow-sm">
-            <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm text-rose-600">
+        <div class="flex items-center gap-3 p-4 mb-6 bg-kunyit-50 border border-kunyit-200 rounded-2xl text-kunyit-800 text-sm font-bold shadow-sm">
+            <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm text-kunyit-700">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
             </div>
             <span>{{ $lowStockCount }} barang memiliki stok di bawah minimum! Mohon segera restok.</span>
@@ -42,31 +42,31 @@
                 <table class="w-full text-sm">
                     <thead class="bg-slate-50">
                         <tr>
-                            <th class="px-4 py-4 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider">Kode</th>
-                            <th class="px-4 py-4 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider">Nama Barang</th>
-                            <th class="px-4 py-4 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider">Kategori</th>
-                            <th class="px-4 py-4 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider">Satuan</th>
-                            <th class="px-4 py-4 text-right font-bold text-slate-500 uppercase text-[10px] tracking-wider">Harga Beli</th>
-                            <th class="px-4 py-4 text-right font-bold text-slate-500 uppercase text-[10px] tracking-wider">Harga Jual</th>
-                            <th class="px-4 py-4 text-center font-bold text-slate-500 uppercase text-[10px] tracking-wider">Stok</th>
-                            <th class="px-4 py-4 text-center font-bold text-slate-500 uppercase text-[10px] tracking-wider">Min</th>
-                            <th class="px-4 py-4 text-center font-bold text-slate-500 uppercase text-[10px] tracking-wider">Status</th>
-                            <th class="px-4 py-4 text-center font-bold text-slate-500 uppercase text-[10px] tracking-wider">Aksi</th>
+                            <th class="px-4 py-4 text-left font-medium text-slate-500 text-xs">Kode</th>
+                            <th class="px-4 py-4 text-left font-medium text-slate-500 text-xs">Nama barang</th>
+                            <th class="px-4 py-4 text-left font-medium text-slate-500 text-xs">Kategori</th>
+                            <th class="px-4 py-4 text-left font-medium text-slate-500 text-xs">Satuan</th>
+                            <th class="px-4 py-4 text-right font-medium text-slate-500 text-xs">Harga beli</th>
+                            <th class="px-4 py-4 text-right font-medium text-slate-500 text-xs">Harga jual</th>
+                            <th class="px-4 py-4 text-center font-medium text-slate-500 text-xs">Stok</th>
+                            <th class="px-4 py-4 text-center font-medium text-slate-500 text-xs">Min</th>
+                            <th class="px-4 py-4 text-center font-medium text-slate-500 text-xs">Status</th>
+                            <th class="px-4 py-4 text-center font-medium text-slate-500 text-xs">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse($products as $product)
                         <tr class="hover:bg-slate-50 transition-all duration-200 group">
-                            <td class="px-4 py-4 font-mono text-xs font-bold text-slate-400">{{ $product->code }}</td>
+                            <td class="whitespace-nowrap px-4 py-4 font-mono text-xs font-medium text-slate-400">{{ $product->code }}</td>
                             <td class="px-4 py-4 font-bold text-slate-800">{{ $product->name }}</td>
-                            <td class="px-4 py-4"><span class="px-3 py-1 text-[10px] font-black uppercase rounded-full {{ $product->category === 'makanan' ? 'bg-orange-100 text-orange-700' : ($product->category === 'minuman' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-700') }}">{{ $product->category }}</span></td>
+                            <td class="px-4 py-4"><span class="px-3 py-1 text-xs font-bold rounded-full {{ $product->category === 'makanan' ? 'bg-kunyit-100 text-kunyit-800' : ($product->category === 'minuman' ? 'bg-brand-50 text-brand-800' : 'bg-enamel-100 text-enamel-700') }}">{{ ucfirst($product->category) }}</span></td>
                             <td class="px-4 py-4 text-slate-500 font-medium">{{ $product->unit }}</td>
-                            <td class="px-4 py-4 text-right text-slate-400 font-medium">{{ formatRupiah($product->buy_price) }}</td>
-                            <td class="px-4 py-4 text-right font-black text-slate-900">{{ formatRupiah($product->sell_price) }}</td>
-                            <td class="px-4 py-4 text-center {{ $product->isLowStock() ? 'text-rose-600 font-black' : 'text-slate-700 font-bold' }}">{{ $product->stock }}</td>
-                            <td class="px-4 py-4 text-center text-slate-400 font-bold">{{ $product->min_stock }}</td>
+                            <td class="whitespace-nowrap tabular px-4 py-4 text-right text-slate-400 font-medium">{{ formatRupiah($product->buy_price) }}</td>
+                            <td class="whitespace-nowrap tabular px-4 py-4 text-right font-bold text-slate-900">{{ formatRupiah($product->sell_price) }}</td>
+                            <td class="tabular px-4 py-4 text-center {{ $product->isLowStock() ? 'text-kunyit-800 font-bold' : 'text-slate-700 font-bold' }}">{{ $product->stock }}</td>
+                            <td class="tabular px-4 py-4 text-center text-slate-400 font-bold">{{ $product->min_stock }}</td>
                             <td class="px-4 py-4 text-center">
-                                <span class="px-3 py-1 text-[10px] font-black uppercase rounded-full {{ $product->is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">{{ $product->is_active ? 'Aktif' : 'Nonaktif' }}</span>
+                                <span class="px-3 py-1 text-xs font-bold rounded-full {{ $product->is_active ? 'bg-brand-100 text-brand-800' : 'bg-enamel-100 text-enamel-600' }}">{{ $product->is_active ? 'Aktif' : 'Nonaktif' }}</span>
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-center gap-1">
@@ -93,28 +93,28 @@
         <div x-show="showAddModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm" @click.self="showAddModal = false">
             <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-hidden flex flex-col">
                 <div class="flex items-center justify-between p-6 border-b border-slate-100">
-                    <h3 class="text-lg font-black text-slate-800">Tambah Barang Baru</h3>
+                    <h3 class="text-lg font-bold text-slate-800">Tambah Barang Baru</h3>
                     <button @click="showAddModal = false" class="p-2 rounded-xl hover:bg-slate-100 transition-colors"><svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
                 </div>
                 <form method="POST" action="{{ route('products.store') }}" enctype="multipart/form-data" class="p-6 space-y-4 overflow-y-auto">
                     @csrf
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Kode *</label><input type="text" name="code" required class="input-field"></div>
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Satuan *</label><input type="text" name="unit" value="Porsi" required class="input-field"></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Kode *</label><input type="text" name="code" required class="input-field"></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Satuan *</label><input type="text" name="unit" value="Porsi" required class="input-field"></div>
                     </div>
-                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Nama Barang *</label><input type="text" name="name" required class="input-field"></div>
+                    <div><label class="block text-xs font-medium text-slate-400 mb-1">Nama barang *</label><input type="text" name="name" required class="input-field"></div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Kategori *</label><select name="category" required class="input-field"><option value="makanan">Makanan</option><option value="minuman">Minuman</option><option value="lainnya">Lainnya</option></select></div>
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Deskripsi</label><input type="text" name="description" class="input-field"></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Kategori *</label><select name="category" required class="input-field"><option value="makanan">Makanan</option><option value="minuman">Minuman</option><option value="lainnya">Lainnya</option></select></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Deskripsi</label><input type="text" name="description" class="input-field"></div>
                     </div>
-                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Gambar Produk</label><input type="file" name="image" accept="image/*" class="input-field"></div>
+                    <div><label class="block text-xs font-medium text-slate-400 mb-1">Gambar produk</label><input type="file" name="image" accept="image/*" class="input-field"></div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Harga Beli *</label><input type="number" name="buy_price" min="0" required class="input-field"></div>
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Harga Jual *</label><input type="number" name="sell_price" min="0" required class="input-field"></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Harga beli *</label><input type="number" name="buy_price" min="0" required class="input-field"></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Harga jual *</label><input type="number" name="sell_price" min="0" required class="input-field"></div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Stok *</label><input type="number" name="stock" min="0" required class="input-field"></div>
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Min. Stok *</label><input type="number" name="min_stock" min="0" value="5" required class="input-field"></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Stok *</label><input type="number" name="stock" min="0" required class="input-field"></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Min. stok *</label><input type="number" name="min_stock" min="0" value="5" required class="input-field"></div>
                     </div>
                     <div class="flex gap-3 pt-4">
                         <button type="button" @click="showAddModal = false" class="btn-secondary flex-1">Batal</button>
@@ -128,28 +128,28 @@
         <div x-show="showEditModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm" @click.self="showEditModal = false">
             <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-hidden flex flex-col">
                 <div class="flex items-center justify-between p-6 border-b border-slate-100">
-                    <h3 class="text-lg font-black text-slate-800">Edit Barang</h3>
+                    <h3 class="text-lg font-bold text-slate-800">Edit Barang</h3>
                     <button @click="showEditModal = false" class="p-2 rounded-xl hover:bg-slate-100 transition-colors"><svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
                 </div>
                 <form :action="'/products/' + editProduct.id" method="POST" enctype="multipart/form-data" class="p-6 space-y-4 overflow-y-auto">
                     @csrf @method('PUT')
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Kode *</label><input type="text" name="code" :value="editProduct.code" required class="input-field"></div>
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Satuan *</label><input type="text" name="unit" :value="editProduct.unit" required class="input-field"></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Kode *</label><input type="text" name="code" :value="editProduct.code" required class="input-field"></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Satuan *</label><input type="text" name="unit" :value="editProduct.unit" required class="input-field"></div>
                     </div>
-                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Nama Barang *</label><input type="text" name="name" :value="editProduct.name" required class="input-field"></div>
+                    <div><label class="block text-xs font-medium text-slate-400 mb-1">Nama barang *</label><input type="text" name="name" :value="editProduct.name" required class="input-field"></div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Kategori *</label><select name="category" required class="input-field"><option value="makanan" :selected="editProduct.category === 'makanan'">Makanan</option><option value="minuman" :selected="editProduct.category === 'minuman'">Minuman</option><option value="lainnya" :selected="editProduct.category === 'lainnya'">Lainnya</option></select></div>
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Deskripsi</label><input type="text" name="description" :value="editProduct.description" class="input-field"></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Kategori *</label><select name="category" required class="input-field"><option value="makanan" :selected="editProduct.category === 'makanan'">Makanan</option><option value="minuman" :selected="editProduct.category === 'minuman'">Minuman</option><option value="lainnya" :selected="editProduct.category === 'lainnya'">Lainnya</option></select></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Deskripsi</label><input type="text" name="description" :value="editProduct.description" class="input-field"></div>
                     </div>
-                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Gambar Produk</label><input type="file" name="image" accept="image/*" class="input-field"></div>
+                    <div><label class="block text-xs font-medium text-slate-400 mb-1">Gambar produk</label><input type="file" name="image" accept="image/*" class="input-field"></div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Harga Beli *</label><input type="number" name="buy_price" :value="editProduct.buy_price" min="0" required class="input-field"></div>
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Harga Jual *</label><input type="number" name="sell_price" :value="editProduct.sell_price" min="0" required class="input-field"></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Harga beli *</label><input type="number" name="buy_price" :value="editProduct.buy_price" min="0" required class="input-field"></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Harga jual *</label><input type="number" name="sell_price" :value="editProduct.sell_price" min="0" required class="input-field"></div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Stok *</label><input type="number" name="stock" :value="editProduct.stock" min="0" required class="input-field"></div>
-                        <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Min. Stok *</label><input type="number" name="min_stock" :value="editProduct.min_stock" min="0" required class="input-field"></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Stok *</label><input type="number" name="stock" :value="editProduct.stock" min="0" required class="input-field"></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Min. stok *</label><input type="number" name="min_stock" :value="editProduct.min_stock" min="0" required class="input-field"></div>
                     </div>
                     <div class="flex gap-3 pt-4">
                         <button type="button" @click="showEditModal = false" class="btn-secondary flex-1">Batal</button>
@@ -158,5 +158,214 @@
                 </form>
             </div>
         </div>
+        </div>
     </div>
+
+    {{-- AI Assistant Chat Panel --}}
+    <div x-data="aiAssistant()" class="fixed right-0 bottom-0 sm:right-6 sm:bottom-6 z-50 flex flex-col items-end w-full sm:w-auto">
+        {{-- Chat Panel --}}
+        <div x-show="isOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-4" class="bg-white sm:rounded-2xl shadow-2xl border border-slate-100 w-full sm:w-[380px] mb-0 sm:mb-4 overflow-hidden flex flex-col h-[100vh] sm:h-[75vh] max-h-[700px]" style="display: none;">
+            
+            {{-- Header --}}
+            <div class="bg-brand-800 p-3.5 flex items-center justify-between text-white shrink-0 shadow-sm z-10">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-yellow-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"></path></svg>
+                    <h3 class="font-bold text-sm">AI Kasir Assistant</h3>
+                </div>
+                <button @click="isOpen = false" class="p-1.5 hover:bg-white/10 rounded-lg transition-colors focus:outline-none">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            {{-- Messages Area --}}
+            <div class="flex-1 p-4 overflow-y-auto bg-slate-50 space-y-5" id="ai-messages-container">
+                <template x-for="(msg, index) in messages" :key="index">
+                    <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
+                        <div :class="msg.role === 'user' ? 'bg-primary-600 text-white rounded-2xl rounded-tr-sm max-w-[80%]' : (msg.isError ? 'bg-rose-100 text-rose-700 rounded-2xl rounded-tl-sm max-w-[85%]' : 'bg-white border border-slate-200 text-slate-700 rounded-2xl rounded-tl-sm max-w-[85%]')" class="p-2.5 shadow-sm text-[13px] leading-relaxed">
+                            <div x-html="msg.role === 'ai' ? formatText(msg.text) : escapeHtml(msg.text)" class="ai-content"></div>
+                        </div>
+                    </div>
+                </template>
+                <div x-show="isLoading" class="flex justify-start" style="display: none;">
+                    <div class="bg-white border border-slate-200 text-slate-500 rounded-2xl rounded-tl-sm max-w-[85%] p-2.5 text-[13px] shadow-sm flex items-center gap-3">
+                        <div class="flex space-x-1">
+                            <div class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay: -0.3s"></div>
+                            <div class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay: -0.15s"></div>
+                            <div class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce"></div>
+                        </div>
+                        <span class="text-xs font-medium">AI menganalisis...</span>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Example Prompts --}}
+            <div class="p-2.5 bg-white border-t border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-hide shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.02)] z-10">
+                <div class="flex gap-2">
+                    <button @click="setInput('Produk apa yang stoknya kritis?')" class="text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full transition-colors border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1">Stok kritis?</button>
+                    <button @click="setInput('Produk apa yang harus direstock?')" class="text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full transition-colors border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1">Perlu restock?</button>
+                    <button @click="setInput('Apakah ada produk yang stoknya habis?')" class="text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full transition-colors border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1">Stok habis?</button>
+                    <button @click="setInput('Buatkan ringkasan kondisi stok saat ini.')" class="text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 px-3 py-1.5 rounded-full transition-colors border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1">Ringkasan stok</button>
+                </div>
+            </div>
+
+            {{-- Input Area --}}
+            <div class="p-3 bg-white border-t border-slate-100 shrink-0">
+                <form @submit.prevent="sendMessage" class="flex gap-2">
+                    <input type="text" x-ref="inputField" x-model="input" placeholder="Tanya AI..." class="flex-1 input-field !py-2 !px-3 !rounded-full !text-[13px] focus:ring-primary-500 focus:border-primary-500" :disabled="isLoading">
+                    <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white w-9 h-9 flex items-center justify-center rounded-full transition-colors shadow-sm disabled:opacity-50 shrink-0 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2" :disabled="isLoading || input.trim() === ''">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {{-- Floating Button Desktop --}}
+        <button x-show="!isOpen" @click="isOpen = true" x-transition class="bg-brand-800 text-white rounded-full px-4 py-2.5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all transform items-center gap-2 mb-6 mr-6 hidden sm:flex focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+            <svg class="w-4 h-4 text-yellow-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"></path></svg>
+            <span class="font-bold text-sm tracking-wide">AI Assistant</span>
+        </button>
+        
+        {{-- Floating Button Mobile --}}
+        <button x-show="!isOpen" @click="isOpen = true" x-transition class="bg-brand-800 text-white rounded-full p-3 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all transform items-center justify-center mb-6 mr-6 flex sm:hidden focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+            <svg class="w-5 h-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"></path></svg>
+        </button>
+    </div>
+
+    <style>
+        .ai-content p { margin-bottom: 0.5rem; }
+        .ai-content p:last-child { margin-bottom: 0; }
+        .ai-content ul { list-style-type: disc; padding-left: 1.25rem; margin-bottom: 0.5rem; margin-top: 0.25rem; }
+        .ai-content ol { list-style-type: decimal; padding-left: 1.25rem; margin-bottom: 0.5rem; margin-top: 0.25rem; }
+        .ai-content li { margin-bottom: 0.25rem; }
+        .ai-content strong { font-weight: 700; color: #1B2620; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('aiAssistant', () => ({
+                isOpen: false,
+                input: '',
+                isLoading: false,
+                messages: [
+                    { role: 'ai', text: 'Halo! Saya AI Kasir Assistant.\n\nAda yang bisa saya bantu terkait stok, rekomendasi restock, atau ringkasan POS hari ini?', isError: false }
+                ],
+                init() {
+                    this.$watch('messages', () => {
+                        this.$nextTick(() => {
+                            const container = document.getElementById('ai-messages-container');
+                            container.scrollTop = container.scrollHeight;
+                        });
+                    });
+                },
+                escapeHtml(unsafe) {
+                    return unsafe
+                         .replace(/&/g, "&amp;")
+                         .replace(/</g, "&lt;")
+                         .replace(/>/g, "&gt;")
+                         .replace(/"/g, "&quot;")
+                         .replace(/'/g, "&#039;");
+                },
+                formatText(text) {
+                    let html = this.escapeHtml(text);
+                    
+                    // Replace bold **text**
+                    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    
+                    let lines = html.split('\n');
+                    let inList = false;
+                    let listType = '';
+                    let result = [];
+                    
+                    for (let i = 0; i < lines.length; i++) {
+                        let line = lines[i];
+                        let isList = false;
+                        
+                        if (line.match(/^(?:-|\*)\s+(.*)$/)) {
+                            if (!inList || listType !== 'ul') {
+                                if (inList) result.push(`</${listType}>`);
+                                result.push('<ul>');
+                                inList = true;
+                                listType = 'ul';
+                            }
+                            result.push('<li>' + line.replace(/^(?:-|\*)\s+(.*)$/, '$1') + '</li>');
+                            isList = true;
+                        } else if (line.match(/^(\d+)\.\s+(.*)$/)) {
+                            if (!inList || listType !== 'ol') {
+                                if (inList) result.push(`</${listType}>`);
+                                result.push('<ol>');
+                                inList = true;
+                                listType = 'ol';
+                            }
+                            result.push('<li>' + line.replace(/^(\d+)\.\s+(.*)$/, '$2') + '</li>');
+                            isList = true;
+                        }
+                        
+                        if (!isList) {
+                            if (inList) {
+                                result.push(`</${listType}>`);
+                                inList = false;
+                            }
+                            result.push(line);
+                        }
+                    }
+                    if (inList) {
+                        result.push(`</${listType}>`);
+                    }
+                    
+                    let finalHtml = '';
+                    for (let i = 0; i < result.length; i++) {
+                        let line = result[i];
+                        if (line.startsWith('<ul') || line.startsWith('</ul') || 
+                            line.startsWith('<ol') || line.startsWith('</ol') || 
+                            line.startsWith('<li')) {
+                            finalHtml += line;
+                        } else {
+                            finalHtml += line + (i < result.length - 1 ? '<br>' : '');
+                        }
+                    }
+                    return finalHtml;
+                },
+                setInput(text) {
+                    this.input = text;
+                    this.$refs.inputField?.focus();
+                },
+                async sendMessage() {
+                    if (this.input.trim() === '' || this.isLoading) return;
+                    
+                    const userText = this.input.trim();
+                    this.messages.push({ role: 'user', text: userText, isError: false });
+                    this.input = '';
+                    this.isLoading = true;
+
+                    try {
+                        const response = await fetch('/ai/chat', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                            },
+                            body: JSON.stringify({ message: userText })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            this.messages.push({ role: 'ai', text: data.reply, isError: false });
+                        } else {
+                            this.messages.push({ role: 'ai', text: data.message || 'Terjadi kesalahan.', isError: true });
+                        }
+                    } catch (error) {
+                        this.messages.push({ role: 'ai', text: 'Gagal terhubung ke server. Periksa koneksi internet.', isError: true });
+                    } finally {
+                        this.isLoading = false;
+                        this.$nextTick(() => {
+                            this.$refs.inputField?.focus();
+                        });
+                    }
+                }
+            }));
+        });
+    </script>
 </x-app-layout>

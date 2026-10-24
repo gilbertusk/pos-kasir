@@ -14,9 +14,9 @@
         <div class="card p-6 mb-8 flex items-center justify-between bg-slate-50/50 border-slate-100 shadow-sm rounded-3xl">
             <div class="flex items-center gap-5">
                 <div class="w-14 h-14 bg-rose-50 rounded-2xl flex items-center justify-center border border-rose-100 shadow-sm"><svg class="w-7 h-7 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg></div>
-                <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Pengeluaran</p><p class="text-3xl font-black text-rose-600 leading-none">{{ formatRupiah($totalExpenses) }}</p></div>
+                <div><p class="text-xs font-medium text-slate-400 mb-1">Total pengeluaran</p><p class="tabular text-2xl font-bold text-rose-600 leading-none">{{ formatRupiah($totalExpenses) }}</p></div>
             </div>
-            <span class="px-4 py-2 bg-white rounded-xl border border-slate-200 text-xs font-bold text-slate-500 shadow-sm">{{ $expenseCount }} Catatan</span>
+            <span class="px-4 py-2 bg-white rounded-xl border border-slate-200 text-xs font-medium text-slate-500 shadow-sm">{{ $expenseCount }} Catatan</span>
         </div>
 
         {{-- Filters --}}
@@ -47,22 +47,22 @@
                 <table class="w-full text-sm">
                     <thead class="bg-slate-50">
                         <tr>
-                            <th class="px-4 py-4 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider">Tanggal</th>
-                            <th class="px-4 py-4 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider">Kategori</th>
-                            <th class="px-4 py-4 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider">Deskripsi</th>
-                            <th class="px-4 py-4 text-right font-bold text-slate-500 uppercase text-[10px] tracking-wider">Nominal</th>
-                            <th class="px-4 py-4 text-left font-bold text-slate-500 uppercase text-[10px] tracking-wider">Admin</th>
-                            <th class="px-4 py-4 text-center font-bold text-slate-500 uppercase text-[10px] tracking-wider">Aksi</th>
+                            <th class="px-4 py-4 text-left font-medium text-slate-500 text-xs">Tanggal</th>
+                            <th class="px-4 py-4 text-left font-medium text-slate-500 text-xs">Kategori</th>
+                            <th class="px-4 py-4 text-left font-medium text-slate-500 text-xs">Deskripsi</th>
+                            <th class="px-4 py-4 text-right font-medium text-slate-500 text-xs">Nominal</th>
+                            <th class="px-4 py-4 text-left font-medium text-slate-500 text-xs">Admin</th>
+                            <th class="px-4 py-4 text-center font-medium text-slate-500 text-xs">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse($expenses as $expense)
                         <tr class="hover:bg-slate-50 transition-all duration-200 group">
-                            <td class="px-4 py-4 text-slate-500 font-medium">{{ $expense->date->format('d/m/Y') }}</td>
-                            <td class="px-4 py-4"><span class="px-3 py-1 text-[10px] font-black uppercase rounded-full {{ \App\Models\Expense::getCategoryBadgeColor($expense->category) }}">{{ $expense->category }}</span></td>
+                            <td class="whitespace-nowrap px-4 py-4 text-slate-500 font-medium">{{ $expense->date->format('d/m/Y') }}</td>
+                            <td class="px-4 py-4"><span class="px-3 py-1 text-xs font-bold rounded-full {{ \App\Models\Expense::getCategoryBadgeColor($expense->category) }}">{{ ucfirst($expense->category) }}</span></td>
                             <td class="px-4 py-4 text-slate-800 font-bold">{{ $expense->description ?? '-' }}</td>
-                            <td class="px-4 py-4 text-right font-black text-rose-600">{{ formatRupiah($expense->amount) }}</td>
-                            <td class="px-4 py-4 text-slate-400 font-bold text-xs uppercase">{{ $expense->user->name ?? '-' }}</td>
+                            <td class="whitespace-nowrap tabular px-4 py-4 text-right font-bold text-rose-600">{{ formatRupiah($expense->amount) }}</td>
+                            <td class="px-4 py-4 text-slate-400 font-medium text-xs">{{ $expense->user->name ?? '-' }}</td>
                             <td class="px-4 py-4">
                                 <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button @click="editExpense = {{ $expense->toJson() }}; showEditModal = true" class="p-2 rounded-xl hover:bg-primary-50 text-primary-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
@@ -85,16 +85,16 @@
         <div x-show="showAddModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm" @click.self="showAddModal = false">
             <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 overflow-hidden flex flex-col">
                 <div class="flex items-center justify-between p-6 border-b border-slate-100">
-                    <div><h3 class="text-lg font-black text-slate-800">Tambah Pengeluaran</h3><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Catat operasional toko</p></div>
+                    <div><h3 class="text-lg font-bold text-slate-800">Tambah Pengeluaran</h3><p class="text-xs font-medium text-slate-400">Catat operasional toko</p></div>
                     <button @click="showAddModal = false" class="p-2 rounded-xl hover:bg-slate-100 transition-colors"><svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
                 </div>
                 <form method="POST" action="{{ route('expenses.store') }}" enctype="multipart/form-data" class="p-6 space-y-4">
                     @csrf
-                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Tanggal *</label><input type="date" name="date" value="{{ date('Y-m-d') }}" required class="input-field font-bold"></div>
-                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Kategori *</label><select name="category" required class="input-field font-bold"><option value="">Pilih kategori</option><option value="listrik">Listrik</option><option value="gaji">Gaji</option><option value="perlengkapan">Perlengkapan</option><option value="sewa">Sewa</option></select></div>
-                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Deskripsi</label><textarea name="description" rows="2" class="input-field font-bold" placeholder="Contoh: Pembayaran listrik Mei"></textarea></div>
-                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Nominal (Rp) *</label><input type="number" name="amount" min="0" required class="input-field !text-lg font-black bg-slate-50" placeholder="0"></div>
-                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Lampiran (Bukti)</label><input type="file" name="attachment" accept=".jpg,.jpeg,.png,.pdf" class="input-field"></div>
+                    <div><label class="block text-xs font-medium text-slate-400 mb-1">Tanggal *</label><input type="date" name="date" value="{{ date('Y-m-d') }}" required class="input-field font-bold"></div>
+                    <div><label class="block text-xs font-medium text-slate-400 mb-1">Kategori *</label><select name="category" required class="input-field font-bold"><option value="">Pilih kategori</option><option value="listrik">Listrik</option><option value="gaji">Gaji</option><option value="perlengkapan">Perlengkapan</option><option value="sewa">Sewa</option></select></div>
+                    <div><label class="block text-xs font-medium text-slate-400 mb-1">Deskripsi</label><textarea name="description" rows="2" class="input-field font-bold" placeholder="Contoh: Pembayaran listrik Mei"></textarea></div>
+                    <div><label class="block text-xs font-medium text-slate-400 mb-1">Nominal (Rp) *</label><input type="number" name="amount" min="0" required class="input-field !text-lg font-bold bg-slate-50" placeholder="0"></div>
+                    <div><label class="block text-xs font-medium text-slate-400 mb-1">Lampiran (bukti)</label><input type="file" name="attachment" accept=".jpg,.jpeg,.png,.pdf" class="input-field"></div>
                     <div class="flex gap-3 pt-4">
                         <button type="button" @click="showAddModal = false" class="btn-secondary flex-1">Batal</button>
                         <button type="submit" class="btn-primary flex-1">Simpan</button>
@@ -107,16 +107,16 @@
         <div x-show="showEditModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm" @click.self="showEditModal = false">
             <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 overflow-hidden flex flex-col">
                 <div class="flex items-center justify-between p-6 border-b border-slate-100">
-                    <h3 class="text-lg font-black text-slate-800">Edit Pengeluaran</h3>
+                    <h3 class="text-lg font-bold text-slate-800">Edit Pengeluaran</h3>
                     <button @click="showEditModal = false" class="p-2 rounded-xl hover:bg-slate-100 transition-colors"><svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
                 </div>
                 <form :action="'/expenses/' + editExpense.id" method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
                     @csrf @method('PUT')
-                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Tanggal *</label><input type="date" name="date" :value="editExpense.date?.split('T')[0]" required class="input-field font-bold"></div>
-                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Kategori *</label><select name="category" required class="input-field font-bold"><option value="listrik" :selected="editExpense.category === 'listrik'">Listrik</option><option value="gaji" :selected="editExpense.category === 'gaji'">Gaji</option><option value="perlengkapan" :selected="editExpense.category === 'perlengkapan'">Perlengkapan</option><option value="sewa" :selected="editExpense.category === 'sewa'">Sewa</option></select></div>
-                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Deskripsi</label><textarea name="description" rows="2" class="input-field font-bold" x-text="editExpense.description"></textarea></div>
-                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Nominal (Rp) *</label><input type="number" name="amount" :value="editExpense.amount" min="0" required class="input-field !text-lg font-black bg-slate-50"></div>
-                    <div><label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Lampiran</label><input type="file" name="attachment" accept=".jpg,.jpeg,.png,.pdf" class="input-field"></div>
+                    <div><label class="block text-xs font-medium text-slate-400 mb-1">Tanggal *</label><input type="date" name="date" :value="editExpense.date?.split('T')[0]" required class="input-field font-bold"></div>
+                    <div><label class="block text-xs font-medium text-slate-400 mb-1">Kategori *</label><select name="category" required class="input-field font-bold"><option value="listrik" :selected="editExpense.category === 'listrik'">Listrik</option><option value="gaji" :selected="editExpense.category === 'gaji'">Gaji</option><option value="perlengkapan" :selected="editExpense.category === 'perlengkapan'">Perlengkapan</option><option value="sewa" :selected="editExpense.category === 'sewa'">Sewa</option></select></div>
+                    <div><label class="block text-xs font-medium text-slate-400 mb-1">Deskripsi</label><textarea name="description" rows="2" class="input-field font-bold" x-text="editExpense.description"></textarea></div>
+                    <div><label class="block text-xs font-medium text-slate-400 mb-1">Nominal (Rp) *</label><input type="number" name="amount" :value="editExpense.amount" min="0" required class="input-field !text-lg font-bold bg-slate-50"></div>
+                    <div><label class="block text-xs font-medium text-slate-400 mb-1">Lampiran</label><input type="file" name="attachment" accept=".jpg,.jpeg,.png,.pdf" class="input-field"></div>
                     <div class="flex gap-3 pt-4">
                         <button type="button" @click="showEditModal = false" class="btn-secondary flex-1">Batal</button>
                         <button type="submit" class="btn-primary flex-1">Simpan</button>

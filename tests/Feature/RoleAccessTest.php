@@ -22,6 +22,7 @@ class RoleAccessTest extends TestCase
             'reports data' => ['/reports/data'],
             'expenses' => ['/expenses'],
             'settings' => ['/settings'],
+            'ai insight' => ['/ai/insight'],
         ];
     }
 

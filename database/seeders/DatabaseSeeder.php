@@ -43,6 +43,7 @@ class DatabaseSeeder extends Seeder
                 'sell_price' => 18000,
                 'stock' => 50,
                 'min_stock' => 10,
+                'image' => 'products/nasi_goreng.png',
                 'description' => 'Nasi goreng dengan telur, ayam, dan sayuran',
             ],
             [
@@ -54,6 +55,7 @@ class DatabaseSeeder extends Seeder
                 'sell_price' => 15000,
                 'stock' => 40,
                 'min_stock' => 10,
+                'image' => 'products/mie_goreng.png',
                 'description' => 'Mie goreng lengkap dengan telur, sosis, dan bakso',
             ],
             [
@@ -65,6 +67,7 @@ class DatabaseSeeder extends Seeder
                 'sell_price' => 20000,
                 'stock' => 30,
                 'min_stock' => 8,
+                'image' => 'products/ayam_geprek.png',
                 'description' => 'Ayam geprek sambal pedas dengan nasi',
             ],
             [
@@ -76,6 +79,7 @@ class DatabaseSeeder extends Seeder
                 'sell_price' => 5000,
                 'stock' => 100,
                 'min_stock' => 20,
+                'image' => 'products/es_teh_manis.png',
                 'description' => 'Teh manis dingin segar',
             ],
             [
@@ -87,6 +91,7 @@ class DatabaseSeeder extends Seeder
                 'sell_price' => 8000,
                 'stock' => 3,
                 'min_stock' => 12,
+                'image' => 'products/ocha.png',
                 'description' => 'Teh ocha kemasan botol 500ml',
             ],
             [
@@ -98,6 +103,7 @@ class DatabaseSeeder extends Seeder
                 'sell_price' => 17000,
                 'stock' => 25,
                 'min_stock' => 8,
+                'image' => 'products/bakso_malang.png',
                 'description' => 'Bakso malang dengan tahu, siomay, dan mie',
             ],
             [
@@ -109,6 +115,7 @@ class DatabaseSeeder extends Seeder
                 'sell_price' => 12000,
                 'stock' => 20,
                 'min_stock' => 5,
+                'image' => 'products/jus_alpukat.png',
                 'description' => 'Jus alpukat segar dengan susu coklat',
             ],
             [
@@ -120,6 +127,7 @@ class DatabaseSeeder extends Seeder
                 'sell_price' => 25000,
                 'stock' => 4,
                 'min_stock' => 5,
+                'image' => 'products/martabak_telur.png',
                 'description' => 'Martabak telur isi daging dan sayuran',
             ],
             [
@@ -131,6 +139,7 @@ class DatabaseSeeder extends Seeder
                 'sell_price' => 5000,
                 'stock' => 60,
                 'min_stock' => 15,
+                'image' => 'products/kerupuk_udang.png',
                 'description' => 'Kerupuk udang renyah',
             ],
             [
@@ -142,6 +151,7 @@ class DatabaseSeeder extends Seeder
                 'sell_price' => 10000,
                 'stock' => 35,
                 'min_stock' => 10,
+                'image' => 'products/kopi_susu.png',
                 'description' => 'Kopi susu dengan gula aren premium',
             ],
         ];

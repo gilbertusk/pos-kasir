@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\AiAssistantController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -60,6 +61,10 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/settings/users/{user}', [SettingController::class, 'updateUser'])->name('settings.updateUser');
         Route::patch('/settings/users/{user}/toggle', [SettingController::class, 'toggleUser'])->name('settings.toggleUser');
         Route::delete('/settings/users/{user}', [SettingController::class, 'destroyUser'])->name('settings.destroyUser');
+
+        // AI Assistant
+        Route::get('/ai/insight', [AiAssistantController::class, 'insight'])->name('ai.insight');
+        Route::post('/ai/chat', [AiAssistantController::class, 'chat'])->name('ai.chat');
     });
 });
 

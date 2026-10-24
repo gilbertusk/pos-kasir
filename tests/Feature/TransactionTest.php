@@ -66,7 +66,16 @@ class TransactionTest extends TestCase
 
         $this->actingAs($kasir)->get('/transactions')
             ->assertOk()
-            ->assertDontSee('Laba Kotor');
+            ->assertDontSee('Laba kotor');
+    }
+
+    public function test_owner_sees_store_profit_summary(): void
+    {
+        $owner = User::factory()->owner()->create();
+
+        $this->actingAs($owner)->get('/transactions')
+            ->assertOk()
+            ->assertSee('Laba kotor');
     }
 
     public function test_owner_cancelling_a_sale_restores_stock_once(): void
