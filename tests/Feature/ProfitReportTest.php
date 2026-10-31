@@ -143,6 +143,51 @@ class ProfitReportTest extends TestCase
         $this->assertEquals(6000, $summary['gross_profit']);
     }
 
+    public function test_transaction_page_summary_follows_the_date_filter(): void
+    {
+        $product = Product::factory()->create(['buy_price' => 6000, 'sell_price' => 10000]);
+
+        $this->travelTo(now()->subDays(10));
+        $this->sell($product, 5);
+        $this->travelBack();
+
+        $this->sell($product, 1);
+        $today = now()->toDateString();
+
+        $this->actingAs($this->owner)->get("/transactions?start_date={$today}&end_date={$today}")
+            ->assertOk()
+            ->assertViewHas('totalTransactions', 1)
+            ->assertViewHas('totalRevenue', fn ($value) => (float) $value === 10000.0)
+            ->assertViewHas('grossProfit', fn ($value) => (float) $value === 4000.0);
+    }
+
+    public function test_transaction_page_summary_covers_everything_without_a_filter(): void
+    {
+        $product = Product::factory()->create(['buy_price' => 6000, 'sell_price' => 10000]);
+
+        $this->travelTo(now()->subDays(10));
+        $this->sell($product, 5);
+        $this->travelBack();
+
+        $this->sell($product, 1);
+
+        $this->actingAs($this->owner)->get('/transactions')
+            ->assertOk()
+            ->assertViewHas('totalTransactions', 2)
+            ->assertViewHas('totalRevenue', fn ($value) => (float) $value === 60000.0);
+    }
+
+    public function test_transaction_page_says_which_period_the_summary_covers(): void
+    {
+        $this->actingAs($this->owner)->get('/transactions?start_date=2026-10-01&end_date=2026-10-31')
+            ->assertOk()
+            ->assertSee('01/10/2026 – 31/10/2026');
+
+        $this->actingAs($this->owner)->get('/transactions')
+            ->assertOk()
+            ->assertSee('Semua tanggal');
+    }
+
     public function test_transaction_page_profit_uses_cost_of_goods_sold(): void
     {
         $product = Product::factory()->create(['buy_price' => 6000, 'sell_price' => 10000]);

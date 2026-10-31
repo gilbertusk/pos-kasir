@@ -4,11 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class TransactionController extends Controller
 {
     public function index(Request $request)
     {
+        $request->validate([
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ], [
+            'end_date.after_or_equal' => 'Tanggal akhir tidak boleh sebelum tanggal awal.',
+        ]);
+
         $query = Transaction::with('user', 'items')->latest();
 
         if ($request->search) {
@@ -20,16 +28,12 @@ class TransactionController extends Controller
             });
         }
 
-        if ($request->start_date) {
-            $query->whereDate('created_at', '>=', $request->start_date);
-        }
-        if ($request->end_date) {
-            $query->whereDate('created_at', '<=', $request->end_date);
-        }
+        $query->betweenDates($request->start_date, $request->end_date);
 
         $transactions = $query->paginate(10);
 
-        $summary = Transaction::profitSummary();
+        // Summary follows the date filter only; search narrows the list, not the store figures.
+        $summary = Transaction::profitSummary($request->start_date, $request->end_date);
 
         return view('transactions.index', [
             'transactions' => $transactions,
@@ -37,7 +41,20 @@ class TransactionController extends Controller
             'totalRevenue' => $summary['total_revenue'],
             'totalExpenses' => $summary['total_expenses'],
             'grossProfit' => $summary['gross_profit'],
+            'summaryPeriod' => $this->periodLabel($request->start_date, $request->end_date),
         ]);
+    }
+
+    private function periodLabel(?string $startDate, ?string $endDate): string
+    {
+        $format = fn (string $date) => Carbon::parse($date)->format('d/m/Y');
+
+        return match (true) {
+            $startDate && $endDate => $format($startDate) . ' – ' . $format($endDate),
+            (bool) $startDate => 'Sejak ' . $format($startDate),
+            (bool) $endDate => 'Sampai ' . $format($endDate),
+            default => 'Semua tanggal',
+        };
     }
 
     public function show(Transaction $transaction)
