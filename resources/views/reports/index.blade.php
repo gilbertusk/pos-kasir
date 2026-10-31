@@ -17,20 +17,20 @@
         {{-- Summary Cards --}}
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             <div class="card p-5 flex items-center gap-4">
-                <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center border border-indigo-100"><svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
-                <div><p class="text-xs font-medium text-slate-400 mb-1">Total transaksi</p><p class="text-2xl font-bold text-slate-900 leading-none" x-text="summary.total_transactions"></p></div>
-            </div>
-            <div class="card p-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center border border-emerald-100"><svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-                <div><p class="text-xs font-medium text-slate-400 mb-1">Total pendapatan</p><p class="tabular text-2xl font-bold text-emerald-600 leading-none" x-text="formatRp(summary.total_revenue)"></p></div>
+                <div><p class="text-xs font-medium text-slate-400 mb-1">Pendapatan</p><p class="tabular text-2xl font-bold text-emerald-600 leading-none" x-text="formatRp(summary.total_revenue)"></p></div>
             </div>
             <div class="card p-5 flex items-center gap-4">
-                <div class="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center border border-rose-100"><svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg></div>
-                <div><p class="text-xs font-medium text-slate-400 mb-1">Total pengeluaran</p><p class="tabular text-2xl font-bold text-rose-600 leading-none" x-text="formatRp(summary.total_expenses)"></p></div>
+                <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center border border-indigo-100"><svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg></div>
+                <div><p class="text-xs font-medium text-slate-400 mb-1">Modal barang terjual</p><p class="tabular text-2xl font-bold text-slate-900 leading-none" x-text="formatRp(summary.total_cogs)"></p></div>
             </div>
             <div class="card p-5 flex items-center gap-4">
                 <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center border border-amber-100"><svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
                 <div><p class="text-xs font-medium text-slate-400 mb-1">Laba kotor</p><p class="tabular text-2xl font-bold text-amber-600 leading-none" x-text="formatRp(summary.gross_profit)"></p></div>
+            </div>
+            <div class="card p-5 flex items-center gap-4">
+                <div class="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center border border-rose-100"><svg class="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></div>
+                <div><p class="text-xs font-medium text-slate-400 mb-1">Laba bersih</p><p class="tabular text-2xl font-bold leading-none" :class="summary.net_profit < 0 ? 'text-rose-600' : 'text-emerald-600'" x-text="formatRp(summary.net_profit)"></p></div>
             </div>
         </div>
 
@@ -65,18 +65,27 @@
                         <span class="text-xl font-bold text-slate-900" x-text="summary.total_transactions"></span>
                     </div>
                     <div class="flex justify-between items-center p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
-                        <span class="text-sm font-bold text-emerald-600">Total pendapatan</span>
+                        <span class="text-sm font-bold text-emerald-600">Pendapatan</span>
                         <span class="tabular text-xl font-bold text-emerald-600" x-text="formatRp(summary.total_revenue)"></span>
                     </div>
-                    <div class="flex justify-between items-center p-4 bg-rose-50 rounded-2xl border border-rose-100">
-                        <span class="text-sm font-bold text-rose-600">Total pengeluaran</span>
-                        <span class="tabular text-xl font-bold text-rose-600" x-text="formatRp(summary.total_expenses)"></span>
+                    <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <span class="text-sm font-bold text-slate-500">− Modal barang terjual</span>
+                        <span class="tabular text-xl font-bold text-slate-900" x-text="formatRp(summary.total_cogs)"></span>
                     </div>
                     <div class="flex justify-between items-center p-4 bg-amber-50 rounded-2xl border border-amber-100">
-                        <span class="text-sm font-bold text-amber-600">Laba kotor</span>
+                        <span class="text-sm font-bold text-amber-600">= Laba kotor</span>
                         <span class="tabular text-xl font-bold text-amber-600" x-text="formatRp(summary.gross_profit)"></span>
                     </div>
+                    <div class="flex justify-between items-center p-4 bg-rose-50 rounded-2xl border border-rose-100">
+                        <span class="text-sm font-bold text-rose-600">− Pengeluaran</span>
+                        <span class="tabular text-xl font-bold text-rose-600" x-text="formatRp(summary.total_expenses)"></span>
+                    </div>
+                    <div class="flex justify-between items-center p-4 rounded-2xl border" :class="summary.net_profit < 0 ? 'bg-rose-50 border-rose-100' : 'bg-emerald-50 border-emerald-100'">
+                        <span class="text-sm font-bold" :class="summary.net_profit < 0 ? 'text-rose-600' : 'text-emerald-600'">= Laba bersih</span>
+                        <span class="tabular text-xl font-bold" :class="summary.net_profit < 0 ? 'text-rose-600' : 'text-emerald-600'" x-text="formatRp(summary.net_profit)"></span>
+                    </div>
                 </div>
+                <p class="mt-4 text-xs text-slate-400">Pendapatan dihitung setelah diskon dan tidak termasuk PPN. Transaksi batal tidak dihitung.</p>
             </div>
         </div>
     </div>
@@ -87,7 +96,7 @@
             startDate: new Date(Date.now() - 6*86400000).toISOString().split('T')[0],
             endDate: new Date().toISOString().split('T')[0],
             activeTab: 'pendapatan',
-            summary: { total_transactions: 0, total_revenue: 0, total_expenses: 0, gross_profit: 0 },
+            summary: { total_transactions: 0, total_revenue: 0, total_cogs: 0, gross_profit: 0, total_expenses: 0, net_profit: 0 },
             charts: {},
 
             formatRp(n) { return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); },

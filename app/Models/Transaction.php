@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id
@@ -81,6 +82,53 @@ class Transaction extends Model
     public function scopeBatal(Builder $query)
     {
         return $query->where('status', 'batal');
+    }
+
+    /**
+     * Limit to sales created between two dates (inclusive). Null bounds are ignored.
+     */
+    public function scopeBetweenDates(Builder $query, ?string $startDate, ?string $endDate)
+    {
+        return $query
+            ->when($startDate, fn ($q) => $q->whereDate('transactions.created_at', '>=', $startDate))
+            ->when($endDate, fn ($q) => $q->whereDate('transactions.created_at', '<=', $endDate));
+    }
+
+    /**
+     * Revenue, cost of goods sold, expenses and profit for paid sales in a date range.
+     * Revenue is after discount and excludes PPN, which is owed to the tax office.
+     *
+     * @return array{total_transactions: int, total_revenue: float, total_cogs: float, gross_profit: float, total_expenses: float, net_profit: float}
+     */
+    public static function profitSummary(?string $startDate = null, ?string $endDate = null): array
+    {
+        $sales = static::lunas()->betweenDates($startDate, $endDate);
+
+        $totalTransactions = (clone $sales)->count();
+        $totalRevenue = (float) (clone $sales)->sum(DB::raw('total - tax_amount'));
+
+        $totalCogs = (float) TransactionItem::query()
+            ->join('transactions', 'transactions.id', '=', 'transaction_items.transaction_id')
+            ->where('transactions.status', 'lunas')
+            ->when($startDate, fn ($q) => $q->whereDate('transactions.created_at', '>=', $startDate))
+            ->when($endDate, fn ($q) => $q->whereDate('transactions.created_at', '<=', $endDate))
+            ->sum(DB::raw('transaction_items.buy_price * transaction_items.quantity'));
+
+        $totalExpenses = (float) Expense::query()
+            ->when($startDate, fn ($q) => $q->whereDate('date', '>=', $startDate))
+            ->when($endDate, fn ($q) => $q->whereDate('date', '<=', $endDate))
+            ->sum('amount');
+
+        $grossProfit = $totalRevenue - $totalCogs;
+
+        return [
+            'total_transactions' => $totalTransactions,
+            'total_revenue' => $totalRevenue,
+            'total_cogs' => $totalCogs,
+            'gross_profit' => $grossProfit,
+            'total_expenses' => $totalExpenses,
+            'net_profit' => $grossProfit - $totalExpenses,
+        ];
     }
 
     public static function generateNumber(): string

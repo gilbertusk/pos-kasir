@@ -46,7 +46,8 @@ Dibangun dengan Laravel 12, Blade, Alpine.js, dan Tailwind CSS.
 - Pembatalan transaksi (owner) yang otomatis mengembalikan stok.
 
 ### Laporan dan pengeluaran
-- Ringkasan pendapatan, pengeluaran, dan laba kotor per rentang tanggal.
+- Ringkasan per rentang tanggal: pendapatan (setelah diskon, tanpa PPN), modal barang terjual, laba kotor, pengeluaran, dan laba bersih.
+- Harga beli disimpan di setiap item transaksi, jadi perubahan harga beli barang tidak mengubah laba transaksi lama.
 - Grafik pendapatan harian, pengeluaran harian, perbandingan keduanya, dan komposisi metode pembayaran.
 - Pencatatan pengeluaran (listrik, gaji, perlengkapan, sewa) dengan lampiran bukti.
 
@@ -194,6 +195,7 @@ Cakupan test utama:
 | `tests/Feature/ProductManagementTest.php` | Hapus barang aman untuk riwayat, toggle status, pesan validasi tampil |
 | `tests/Feature/UserManagementTest.php` | Proteksi hapus/nonaktifkan akun sendiri dan akun yang punya riwayat |
 | `tests/Feature/TransactionTest.php` | Detail transaksi, pembatalan dan pengembalian stok |
+| `tests/Feature/ProfitReportTest.php` | Harga beli tersimpan saat jual, laba kotor dan laba bersih, transaksi batal dan PPN tidak dihitung |
 | `tests/Feature/Auth/*` | Login, akun nonaktif, registrasi dinonaktifkan, reset password |
 
 ---

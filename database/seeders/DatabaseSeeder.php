@@ -183,6 +183,7 @@ class DatabaseSeeder extends Seeder
             'product_name' => 'Nasi Goreng Spesial',
             'quantity' => 1,
             'price' => 18000,
+            'buy_price' => 12000,
             'subtotal' => 18000,
         ]);
 
@@ -192,6 +193,7 @@ class DatabaseSeeder extends Seeder
             'product_name' => 'Ocha 500ml',
             'quantity' => 2,
             'price' => 8000,
+            'buy_price' => 4000,
             'subtotal' => 16000,
         ]);
 
@@ -217,6 +219,7 @@ class DatabaseSeeder extends Seeder
             'product_name' => 'Ayam Geprek',
             'quantity' => 1,
             'price' => 20000,
+            'buy_price' => 13000,
             'subtotal' => 20000,
         ]);
 
@@ -226,6 +229,7 @@ class DatabaseSeeder extends Seeder
             'product_name' => 'Jus Alpukat',
             'quantity' => 1,
             'price' => 12000,
+            'buy_price' => 7000,
             'subtotal' => 12000,
         ]);
 
@@ -235,6 +239,7 @@ class DatabaseSeeder extends Seeder
             'product_name' => 'Mie Goreng Telur + Sosis + Bakso',
             'quantity' => 1,
             'price' => 15000,
+            'buy_price' => 10000,
             'subtotal' => 15000,
         ]);
 
@@ -260,6 +265,7 @@ class DatabaseSeeder extends Seeder
             'product_name' => 'Martabak Telur',
             'quantity' => 2,
             'price' => 25000,
+            'buy_price' => 15000,
             'subtotal' => 50000,
         ]);
 
@@ -269,6 +275,7 @@ class DatabaseSeeder extends Seeder
             'product_name' => 'Es Teh Manis',
             'quantity' => 1,
             'price' => 5000,
+            'buy_price' => 2000,
             'subtotal' => 5000,
         ]);
 

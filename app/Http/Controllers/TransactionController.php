@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
-use App\Models\Expense;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
@@ -30,14 +29,15 @@ class TransactionController extends Controller
 
         $transactions = $query->paginate(10);
 
-        $totalTransactions = Transaction::lunas()->count();
-        $totalRevenue = Transaction::lunas()->sum('total');
-        $totalExpenses = Expense::sum('amount');
-        $grossProfit = $totalRevenue - $totalExpenses;
+        $summary = Transaction::profitSummary();
 
-        return view('transactions.index', compact(
-            'transactions', 'totalTransactions', 'totalRevenue', 'totalExpenses', 'grossProfit'
-        ));
+        return view('transactions.index', [
+            'transactions' => $transactions,
+            'totalTransactions' => $summary['total_transactions'],
+            'totalRevenue' => $summary['total_revenue'],
+            'totalExpenses' => $summary['total_expenses'],
+            'grossProfit' => $summary['gross_profit'],
+        ]);
     }
 
     public function show(Transaction $transaction)

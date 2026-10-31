@@ -119,6 +119,7 @@ class KasirController extends Controller
                 'product_name' => $product->name,
                 'quantity' => $item['quantity'],
                 'price' => $product->sell_price,
+                'buy_price' => $product->buy_price,
                 'subtotal' => $itemSubtotal,
             ];
         }
