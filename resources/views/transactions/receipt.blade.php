@@ -79,6 +79,9 @@
     @if($transaction->tax_amount > 0)
         <div class="row"><span>PPN {{ (float) $transaction->tax_percent }}%</span><span>{{ formatRupiah($transaction->tax_amount) }}</span></div>
     @endif
+    @if((float) $transaction->rounding_amount !== 0.0)
+        <div class="row"><span>Pembulatan</span><span>{{ $transaction->rounding_amount < 0 ? '-' : '+' }}{{ formatRupiah(abs($transaction->rounding_amount)) }}</span></div>
+    @endif
     <div class="row total"><span>TOTAL</span><span>{{ formatRupiah($transaction->total) }}</span></div>
     <hr>
 

@@ -165,6 +165,64 @@ class CheckoutTest extends TestCase
         $this->assertSame(3, $product->fresh()->stock);
     }
 
+    public function test_total_is_rounded_to_the_nearest_configured_step(): void
+    {
+        Setting::setValue('price_rounding', '1000');
+        $product = Product::factory()->create(['sell_price' => 18000, 'stock' => 10]);
+
+        // 18.000 + PPN 1.980 = 19.980, rounded up to 20.000
+        $this->checkout([
+            'items' => [['product_id' => $product->id, 'quantity' => 1]],
+            'payment_method' => 'tunai',
+            'paid_amount' => 20000,
+        ])->assertOk()->assertJsonPath('transaction.rounding_amount', '20');
+
+        $transaction = Transaction::sole();
+        $this->assertEquals(1980, $transaction->tax_amount);
+        $this->assertEquals(20, $transaction->rounding_amount);
+        $this->assertEquals(20000, $transaction->total);
+        $this->assertEquals(0, $transaction->change_amount);
+    }
+
+    public function test_rounding_can_go_down(): void
+    {
+        Setting::setValue('tax_enabled', '0');
+        Setting::setValue('price_rounding', '500');
+        $product = Product::factory()->create(['sell_price' => 12200]);
+
+        $this->checkout([
+            'items' => [['product_id' => $product->id, 'quantity' => 1]],
+            'payment_method' => 'qris',
+            'paid_amount' => 0,
+        ])->assertOk();
+
+        $transaction = Transaction::sole();
+        $this->assertEquals(-200, $transaction->rounding_amount);
+        $this->assertEquals(12000, $transaction->total);
+        $this->assertEquals(12000, $transaction->paid_amount);
+    }
+
+    public function test_no_rounding_by_default(): void
+    {
+        $product = Product::factory()->create(['sell_price' => 18000]);
+
+        $this->checkout([
+            'items' => [['product_id' => $product->id, 'quantity' => 1]],
+            'payment_method' => 'qris',
+            'paid_amount' => 0,
+        ])->assertOk();
+
+        $this->assertEquals(0, Transaction::sole()->rounding_amount);
+        $this->assertEquals(19980, Transaction::sole()->total);
+    }
+
+    public function test_cashier_screen_receives_the_rounding_step(): void
+    {
+        Setting::setValue('price_rounding', '500');
+
+        $this->actingAs($this->kasir)->get('/kasir')->assertOk()->assertViewHas('priceRounding', 500);
+    }
+
     public function test_inactive_products_can_not_be_sold(): void
     {
         $product = Product::factory()->inactive()->create();

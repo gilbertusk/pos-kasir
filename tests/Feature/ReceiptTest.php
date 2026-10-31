@@ -107,6 +107,14 @@ class ReceiptTest extends TestCase
         $this->receipt('?print=0')->assertOk()->assertDontSee('window.print()', false);
     }
 
+    public function test_rounding_is_shown_on_the_receipt_only_when_applied(): void
+    {
+        $this->receipt()->assertOk()->assertDontSee('Pembulatan');
+
+        $this->transaction->update(['rounding_amount' => -200, 'total' => 19800]);
+        $this->receipt()->assertOk()->assertSee('Pembulatan')->assertSee('-Rp 200');
+    }
+
     public function test_cancelled_sale_receipt_is_clearly_marked(): void
     {
         $this->transaction->cancel(User::factory()->owner()->create(), 'Salah input');

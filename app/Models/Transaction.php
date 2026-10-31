@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
  * @property float $discount_amount
  * @property float $tax_percent
  * @property float $tax_amount
+ * @property float $rounding_amount
  * @property float $total
  * @property string $payment_method
  * @property float $paid_amount
@@ -46,6 +47,7 @@ class Transaction extends Model
         'discount_amount',
         'tax_percent',
         'tax_amount',
+        'rounding_amount',
         'total',
         'payment_method',
         'paid_amount',
@@ -62,6 +64,7 @@ class Transaction extends Model
         'discount_amount' => 'decimal:0',
         'tax_percent' => 'decimal:2',
         'tax_amount' => 'decimal:0',
+        'rounding_amount' => 'decimal:0',
         'total' => 'decimal:0',
         'paid_amount' => 'decimal:0',
         'change_amount' => 'decimal:0',

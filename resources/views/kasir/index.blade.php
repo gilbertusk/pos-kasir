@@ -8,6 +8,7 @@
         'taxPercent' => (float)$taxPercent,
         'maxDiscount' => (float)$maxDiscount,
         'autoPrint' => $autoPrint,
+        'priceRounding' => $priceRounding,
     ]) }})" x-init="init()"
          class="lg:grid lg:h-[calc(100dvh-4rem)] lg:grid-cols-[minmax(0,1fr)_380px] lg:grid-rows-[minmax(0,1fr)]">
 
@@ -146,6 +147,9 @@
                     <div x-show="taxEnabled" class="flex justify-between text-enamel-500">
                         <dt x-text="'PPN ' + taxPercent + '%'"></dt><dd class="tabular" x-text="formatRupiah(taxAmount)"></dd>
                     </div>
+                    <div x-show="roundingAmount !== 0" x-cloak class="flex justify-between text-enamel-500">
+                        <dt>Pembulatan</dt><dd class="tabular" x-text="(roundingAmount < 0 ? '−' : '+') + formatRupiah(Math.abs(roundingAmount))"></dd>
+                    </div>
                     <div class="flex items-baseline justify-between border-t border-enamel-200 pt-2.5">
                         <dt class="text-sm font-medium text-ink">Total</dt>
                         <dd class="tabular text-2xl font-bold text-brand-800" x-text="formatRupiah(total)"></dd>
@@ -236,6 +240,7 @@
             showCart: false,
             lastTransaction: null,
             autoPrint: config.autoPrint,
+            priceRounding: config.priceRounding,
             receiptUrl: 'about:blank',
             printOnLoad: false,
 
@@ -270,7 +275,13 @@
             get discountAmount() { return Math.round(this.subtotal * this.discountPercent / 100); },
             get afterDiscount() { return this.subtotal - this.discountAmount; },
             get taxAmount() { return this.taxEnabled ? Math.round(this.afterDiscount * this.taxPercent / 100) : 0; },
-            get total() { return this.afterDiscount + this.taxAmount; },
+            get beforeRounding() { return this.afterDiscount + this.taxAmount; },
+            // Same rule as the server: nearest step, halves round up.
+            get total() {
+                const step = this.priceRounding;
+                return step > 0 ? Math.round(this.beforeRounding / step) * step : this.beforeRounding;
+            },
+            get roundingAmount() { return this.total - this.beforeRounding; },
             get changeAmount() { return this.paymentMethod === 'tunai' ? Math.max(0, this.paidAmount - this.total) : 0; },
 
             // Likely notes a customer hands over: the total rounded up to common denominations.

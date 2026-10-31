@@ -55,6 +55,7 @@ Dibangun dengan Laravel 12, Blade, Alpine.js, dan Tailwind CSS.
 - Profil toko (nama, alamat, telepon, WhatsApp, NPWP, logo). Semua tampil di struk (WhatsApp dan NPWP hanya jika diisi), nama toko juga di sidebar.
 - Struk: ukuran kertas 58mm/80mm, margin, dan cetak otomatis setelah bayar. Layar kasir dan cetak ulang memakai halaman struk yang sama. Struk transaksi batal ditandai "DIBATALKAN".
 - Pajak dan diskon: aktif/nonaktif PPN, persentase PPN, batas diskon maksimal.
+- Pembulatan harga ke Rp 100, Rp 500, atau Rp 1.000 terdekat (setengah dibulatkan ke atas), dihitung setelah PPN. Selisihnya tampil sebagai baris "Pembulatan" di layar kasir, struk, dan detail transaksi.
 - Format nomor transaksi (`{YYYY}`, `{YY}`, `{MM}`, `{DD}`, `{XXX}`) dengan reset harian, bulanan, tahunan, atau tidak pernah. Nomor dijamin unik walau beberapa kasir membayar bersamaan.
 - Pengaturan disimpan di cache dan langsung diperbarui setiap kali disimpan dari halaman Pengaturan. Jika tabel `settings` diubah langsung di database (misalnya lewat phpMyAdmin), jalankan `php artisan cache:clear` supaya perubahan terbaca.
 - Manajemen pengguna: tambah akun owner/kasir dan nonaktifkan akun. Akun yang dinonaktifkan langsung tidak bisa login.
@@ -193,7 +194,7 @@ Cakupan test utama:
 
 | File | Yang diuji |
 | --- | --- |
-| `tests/Feature/CheckoutTest.php` | Perhitungan total, diskon, PPN dari pengaturan, uang kurang ditolak, stok tidak cukup, barang nonaktif |
+| `tests/Feature/CheckoutTest.php` | Perhitungan total, diskon, PPN dari pengaturan, pembulatan harga, uang kurang ditolak, stok tidak cukup, barang nonaktif |
 | `tests/Feature/RoleAccessTest.php` | Pembatasan halaman owner vs kasir |
 | `tests/Feature/ProductManagementTest.php` | Hapus barang aman untuk riwayat, toggle status, pesan validasi tampil |
 | `tests/Feature/UserManagementTest.php` | Proteksi hapus/nonaktifkan akun sendiri dan akun yang punya riwayat |
@@ -201,7 +202,7 @@ Cakupan test utama:
 | `tests/Feature/TransactionNumberTest.php` | Format dan reset nomor transaksi, nomor tidak bentrok, validasi pengaturan |
 | `tests/Feature/SettingCacheTest.php` | Pengaturan dibaca dari database sekali, perubahan langsung terlihat |
 | `tests/Feature/RateLimitTest.php` | Batas request AI (10/menit, per akun) dan checkout (60/menit), reset setelah satu menit |
-| `tests/Feature/ReceiptTest.php` | Struk membaca profil toko, ukuran kertas, margin, cetak otomatis, tanda batal; satu sumber struk di kasir dan cetak ulang |
+| `tests/Feature/ReceiptTest.php` | Struk membaca profil toko, ukuran kertas, margin, cetak otomatis, baris pembulatan, tanda batal; satu sumber struk di kasir dan cetak ulang |
 | `tests/Feature/ProfitReportTest.php` | Harga beli tersimpan saat jual, laba kotor dan laba bersih, transaksi batal tidak dihitung, pendapatan termasuk PPN |
 | `tests/Feature/AppConfigurationTest.php` | Zona waktu, skrip deploy tidak di `public/` dan wajib secret, tidak ada `env()` di kode aplikasi, konfigurasi Gemini |
 | `tests/Feature/Auth/*` | Login, akun nonaktif, registrasi dinonaktifkan, reset password |

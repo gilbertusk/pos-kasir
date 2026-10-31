@@ -22,8 +22,9 @@ class KasirController extends Controller
         $taxPercent = Setting::getValue('tax_percent', '11');
         $maxDiscount = Setting::getValue('max_discount', '50');
         $autoPrint = Setting::getValue('auto_print', '1') === '1';
+        $priceRounding = (int) Setting::getValue('price_rounding', '0');
 
-        return view('kasir.index', compact('products', 'categories', 'taxEnabled', 'taxPercent', 'maxDiscount', 'autoPrint'));
+        return view('kasir.index', compact('products', 'categories', 'taxEnabled', 'taxPercent', 'maxDiscount', 'autoPrint', 'priceRounding'));
     }
 
     public function getProducts(Request $request)
@@ -131,7 +132,12 @@ class KasirController extends Controller
         $afterDiscount = $subtotal - $discountAmount;
 
         $taxAmount = round($afterDiscount * $taxPercent / 100);
-        $total = $afterDiscount + $taxAmount;
+        $beforeRounding = $afterDiscount + $taxAmount;
+
+        // Nearest step, halves round up; the cashier screen uses the same rule.
+        $step = (int) Setting::getValue('price_rounding', '0');
+        $total = $step > 0 ? round($beforeRounding / $step) * $step : $beforeRounding;
+        $roundingAmount = $total - $beforeRounding;
 
         // Non-cash payments are always settled for exactly the total.
         $paidAmount = $validated['payment_method'] === 'tunai'
@@ -152,6 +158,7 @@ class KasirController extends Controller
             'discount_amount' => $discountAmount,
             'tax_percent' => $taxPercent,
             'tax_amount' => $taxAmount,
+            'rounding_amount' => $roundingAmount,
             'total' => $total,
             'payment_method' => $validated['payment_method'],
             'paid_amount' => $paidAmount,
