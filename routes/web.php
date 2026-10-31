@@ -18,7 +18,7 @@ Route::middleware(['auth'])->group(function () {
     // Kasir (semua role)
     Route::get('/kasir', [KasirController::class, 'index'])->name('kasir.index');
     Route::get('/kasir/products', [KasirController::class, 'getProducts'])->name('kasir.products');
-    Route::post('/kasir/store', [KasirController::class, 'store'])->name('kasir.store');
+    Route::post('/kasir/store', [KasirController::class, 'store'])->middleware('throttle:checkout')->name('kasir.store');
 
     // Transactions (semua role)
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
@@ -63,8 +63,10 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/settings/users/{user}', [SettingController::class, 'destroyUser'])->name('settings.destroyUser');
 
         // AI Assistant
-        Route::get('/ai/insight', [AiAssistantController::class, 'insight'])->name('ai.insight');
-        Route::post('/ai/chat', [AiAssistantController::class, 'chat'])->name('ai.chat');
+        Route::middleware('throttle:ai')->group(function () {
+            Route::get('/ai/insight', [AiAssistantController::class, 'insight'])->name('ai.insight');
+            Route::post('/ai/chat', [AiAssistantController::class, 'chat'])->name('ai.chat');
+        });
     });
 });
 

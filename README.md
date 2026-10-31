@@ -198,6 +198,7 @@ Cakupan test utama:
 | `tests/Feature/UserManagementTest.php` | Proteksi hapus/nonaktifkan akun sendiri dan akun yang punya riwayat |
 | `tests/Feature/TransactionTest.php` | Detail transaksi, pembatalan dengan alasan, stok dikembalikan sekali, tombol batal hanya untuk owner |
 | `tests/Feature/TransactionNumberTest.php` | Format dan reset nomor transaksi, nomor tidak bentrok, validasi pengaturan |
+| `tests/Feature/RateLimitTest.php` | Batas request AI (10/menit, per akun) dan checkout (60/menit), reset setelah satu menit |
 | `tests/Feature/ReceiptTest.php` | Struk membaca profil toko, ukuran kertas, margin, cetak otomatis, tanda batal; satu sumber struk di kasir dan cetak ulang |
 | `tests/Feature/ProfitReportTest.php` | Harga beli tersimpan saat jual, laba kotor dan laba bersih, transaksi batal tidak dihitung, pendapatan termasuk PPN |
 | `tests/Feature/Auth/*` | Login, akun nonaktif, registrasi dinonaktifkan, reset password |
@@ -268,6 +269,7 @@ Untuk server dengan akses SSH, cukup jalankan `php artisan migrate --force`, `ph
 - Matikan `APP_DEBUG` di production.
 - Skrip di folder `deploy/` bisa dijalankan siapa saja tanpa login; salin ke server hanya saat dibutuhkan dan langsung hapus setelahnya.
 - Ganti atau hapus akun demo sebelum dipakai untuk usaha sungguhan.
+- Batas jumlah request per akun: AI Assistant (chat dan ringkasan stok digabung) 10 per menit untuk menjaga kuota Gemini, checkout 60 per menit. Request yang melewati batas mendapat status 429 dengan pesan berbahasa Indonesia.
 
 ---
 
