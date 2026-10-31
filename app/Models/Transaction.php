@@ -145,7 +145,7 @@ class Transaction extends Model
 
     /**
      * Revenue, cost of goods sold, expenses and profit for paid sales in a date range.
-     * Revenue is after discount and excludes PPN, which is owed to the tax office.
+     * Revenue is what customers paid: after discount, including PPN.
      *
      * @return array{total_transactions: int, total_revenue: float, total_cogs: float, gross_profit: float, total_expenses: float, net_profit: float}
      */
@@ -154,7 +154,7 @@ class Transaction extends Model
         $sales = static::lunas()->betweenDates($startDate, $endDate);
 
         $totalTransactions = (clone $sales)->count();
-        $totalRevenue = (float) (clone $sales)->sum(DB::raw('total - tax_amount'));
+        $totalRevenue = (float) (clone $sales)->sum('total');
 
         $totalCogs = (float) TransactionItem::query()
             ->join('transactions', 'transactions.id', '=', 'transaction_items.transaction_id')

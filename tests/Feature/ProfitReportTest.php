@@ -122,7 +122,7 @@ class ProfitReportTest extends TestCase
         $this->assertEquals(6000, $summary['total_cogs']);
     }
 
-    public function test_discount_reduces_profit_but_tax_does_not_count_as_revenue(): void
+    public function test_revenue_is_after_discount_and_includes_tax(): void
     {
         Setting::setValue('tax_enabled', '1');
         Setting::setValue('tax_percent', '10');
@@ -137,10 +137,10 @@ class ProfitReportTest extends TestCase
 
         $summary = $this->reportSummary();
 
-        // 20.000 - diskon 2.000 = 18.000 (PPN 1.800 milik negara, bukan pendapatan)
-        $this->assertEquals(18000, $summary['total_revenue']);
+        // 20.000 - diskon 2.000 = 18.000, + PPN 1.800 = 19.800 dibayar pelanggan
+        $this->assertEquals(19800, $summary['total_revenue']);
         $this->assertEquals(12000, $summary['total_cogs']);
-        $this->assertEquals(6000, $summary['gross_profit']);
+        $this->assertEquals(7800, $summary['gross_profit']);
     }
 
     public function test_transaction_page_summary_follows_the_date_filter(): void

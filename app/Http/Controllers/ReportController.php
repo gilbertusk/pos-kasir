@@ -21,10 +21,10 @@ class ReportController extends Controller
 
         $summary = Transaction::profitSummary($startDate, $endDate);
 
-        // Daily revenue (after discount, excluding PPN)
+        // Daily revenue (after discount, including PPN)
         $dailyRevenue = Transaction::lunas()
             ->betweenDates($startDate, $endDate)
-            ->select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(total - tax_amount) as total'))
+            ->select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(total) as total'))
             ->groupBy('date')
             ->orderBy('date')
             ->get();

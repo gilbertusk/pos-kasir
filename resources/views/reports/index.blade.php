@@ -85,7 +85,7 @@
                         <span class="tabular text-xl font-bold" :class="summary.net_profit < 0 ? 'text-rose-600' : 'text-emerald-600'" x-text="formatRp(summary.net_profit)"></span>
                     </div>
                 </div>
-                <p class="mt-4 text-xs text-slate-400">Pendapatan dihitung setelah diskon dan tidak termasuk PPN. Transaksi batal tidak dihitung.</p>
+                <p class="mt-4 text-xs text-slate-400">Pendapatan dihitung setelah diskon dan sudah termasuk PPN. Transaksi batal tidak dihitung.</p>
             </div>
         </div>
     </div>
