@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use App\Support\TransactionNumberFormat;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -131,20 +133,65 @@ class Transaction extends Model
         ];
     }
 
+    /**
+     * Issue the next transaction number using the format and reset period from Settings.
+     * The period counter row is locked, so concurrent checkouts never get the same number.
+     * Call inside the database transaction that saves the sale so the lock is held until commit.
+     */
     public static function generateNumber(): string
     {
-        $prefix = 'TRX-' . date('Y') . '-';
-        $lastTransaction = static::where('transaction_number', 'like', $prefix . '%')
-            ->orderBy('transaction_number', 'desc')
-            ->first();
+        $settings = Setting::getMultiple(['transaction_format', 'reset_number']);
 
-        if ($lastTransaction) {
-            $lastNumber = (int) str_replace($prefix, '', $lastTransaction->transaction_number);
-            $newNumber = $lastNumber + 1;
-        } else {
-            $newNumber = 1;
-        }
+        $format = TransactionNumberFormat::isValid($settings['transaction_format'])
+            ? $settings['transaction_format']
+            : TransactionNumberFormat::DEFAULT_FORMAT;
+        $period = TransactionNumberFormat::effectivePeriod(
+            $format,
+            $settings['reset_number'] ?? TransactionNumberFormat::DEFAULT_RESET
+        );
 
-        return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+        $now = now();
+        $key = TransactionNumberFormat::periodKey($period, $now);
+
+        return DB::transaction(function () use ($format, $now, $key) {
+            DB::table('transaction_sequences')->insertOrIgnore([
+                'period' => $key,
+                'last_number' => static::highestIssuedNumber($format, $now),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+
+            $sequence = DB::table('transaction_sequences')->where('period', $key)->lockForUpdate()->first();
+            $next = $sequence->last_number;
+
+            // Skip numbers taken outside the counter, e.g. imported data or a changed format.
+            do {
+                $next++;
+                $number = TransactionNumberFormat::render($format, $now, $next);
+            } while (static::where('transaction_number', $number)->exists());
+
+            DB::table('transaction_sequences')->where('id', $sequence->id)->update([
+                'last_number' => $next,
+                'updated_at' => $now,
+            ]);
+
+            return $number;
+        });
+    }
+
+    /**
+     * Highest counter already used by existing numbers in this format, so a new period row
+     * continues after data created before the counter table existed.
+     */
+    private static function highestIssuedNumber(string $format, CarbonInterface $date): int
+    {
+        $prefix = TransactionNumberFormat::prefix($format, $date);
+        $pattern = TransactionNumberFormat::pattern($format, $date);
+
+        return static::query()
+            ->where('transaction_number', 'like', addcslashes($prefix, '\\%_') . '%')
+            ->pluck('transaction_number')
+            ->map(fn (string $number) => preg_match($pattern, $number, $m) ? (int) $m[1] : 0)
+            ->max() ?? 0;
     }
 }

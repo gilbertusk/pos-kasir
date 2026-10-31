@@ -44,8 +44,16 @@
                 <div>
                     <h3 class="text-sm font-bold text-slate-400 mb-6">Format dan printer</h3>
                     <div class="space-y-6 max-w-xl">
-                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Format nomor transaksi</label><input type="text" name="transaction_format" value="{{ $settings['transaction_format'] ?? 'TRX-{YYYY}-{XXX}' }}" class="input-field font-bold"><p class="text-xs text-slate-400 mt-2 font-medium tracking-tight italic">{DD} = Tanggal, {MM} = Bulan, {YYYY} = Tahun</p></div>
-                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Reset nomor urut</label><select name="reset_number" class="input-field w-60 font-bold"><option value="monthly" {{ ($settings['reset_number'] ?? 'monthly') == 'monthly' ? 'selected' : '' }}>Reset setiap bulan</option><option value="yearly" {{ ($settings['reset_number'] ?? 'monthly') == 'yearly' ? 'selected' : '' }}>Reset setiap tahun</option><option value="never" {{ ($settings['reset_number'] ?? 'monthly') == 'never' ? 'selected' : '' }}>Tidak pernah reset</option></select></div>
+                        @php
+                            $numberFormat = old('transaction_format', $settings['transaction_format'] ?? \App\Support\TransactionNumberFormat::DEFAULT_FORMAT);
+                            // Show the period actually in use, so an older saved combination that the format can not support does not block saving.
+                            $resetNumber = old('reset_number', \App\Support\TransactionNumberFormat::effectivePeriod(
+                                \App\Support\TransactionNumberFormat::isValid($numberFormat) ? $numberFormat : \App\Support\TransactionNumberFormat::DEFAULT_FORMAT,
+                                $settings['reset_number'] ?? \App\Support\TransactionNumberFormat::DEFAULT_RESET
+                            ));
+                        @endphp
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Format nomor transaksi</label><input type="text" name="transaction_format" value="{{ $numberFormat }}" maxlength="50" required class="input-field font-bold"><p class="text-xs text-slate-400 mt-2 font-medium tracking-tight italic">{DD} = Tanggal, {MM} = Bulan, {YYYY} = Tahun, {YY} = Tahun 2 digit, {XXX} = Nomor urut (jumlah X = jumlah digit)</p></div>
+                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Reset nomor urut</label><select name="reset_number" class="input-field w-60 font-bold">@foreach(['daily' => 'Reset setiap hari', 'monthly' => 'Reset setiap bulan', 'yearly' => 'Reset setiap tahun', 'never' => 'Tidak pernah reset'] as $value => $label)<option value="{{ $value }}" {{ $resetNumber === $value ? 'selected' : '' }}>{{ $label }}</option>@endforeach</select><p class="text-xs text-slate-400 mt-2 font-medium tracking-tight italic">Reset harian butuh {DD} {MM} {YYYY}, bulanan butuh {MM} {YYYY}, tahunan butuh {YYYY} di format.</p></div>
                         <div class="grid grid-cols-2 gap-4">
                             <div><label class="block text-xs font-medium text-slate-400 mb-1">Ukuran kertas</label><select name="printer_size" class="input-field font-bold"><option value="58mm" {{ ($settings['printer_size'] ?? '80mm') == '58mm' ? 'selected' : '' }}>Thermal 58mm</option><option value="80mm" {{ ($settings['printer_size'] ?? '80mm') == '80mm' ? 'selected' : '' }}>Thermal 80mm</option></select></div>
                             <div><label class="block text-xs font-medium text-slate-400 mb-1">Margin (mm)</label><input type="number" name="printer_margin" value="{{ $settings['printer_margin'] ?? '5' }}" min="0" class="input-field font-bold"></div>

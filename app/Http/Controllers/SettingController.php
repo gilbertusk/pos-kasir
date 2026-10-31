@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Setting;
 use App\Models\User;
+use App\Support\TransactionNumberFormat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -49,11 +50,33 @@ class SettingController extends Controller
             'tax_percent' => 'nullable|numeric|min:0|max:100',
             'max_discount' => 'nullable|numeric|min:0|max:100',
             'price_rounding' => 'nullable|in:0,100,500,1000',
-            'transaction_format' => 'nullable|string',
-            'reset_number' => 'nullable|in:daily,monthly,yearly,never',
+            'transaction_format' => [
+                'required', 'string', 'max:50',
+                function (string $attribute, mixed $value, \Closure $fail) {
+                    if (! TransactionNumberFormat::isValid($value)) {
+                        $fail('Format nomor transaksi harus berisi tepat satu nomor urut, misalnya {XXX}.');
+                    }
+                },
+            ],
+            'reset_number' => [
+                'required', 'in:' . implode(',', TransactionNumberFormat::PERIODS),
+                function (string $attribute, mixed $value, \Closure $fail) use ($request) {
+                    $format = (string) $request->input('transaction_format');
+
+                    if (TransactionNumberFormat::isValid($format) && ! TransactionNumberFormat::supportsReset($format, $value)) {
+                        $fail(match ($value) {
+                            'daily' => 'Reset harian butuh {DD}, {MM}, dan {YYYY} atau {YY} di format nomor transaksi.',
+                            'monthly' => 'Reset bulanan butuh {MM} dan {YYYY} atau {YY} di format nomor transaksi.',
+                            default => 'Reset tahunan butuh {YYYY} atau {YY} di format nomor transaksi.',
+                        });
+                    }
+                },
+            ],
             'printer_size' => 'nullable|in:58mm,80mm',
             'printer_margin' => 'nullable|numeric|min:0',
             'auto_print' => 'nullable|boolean',
+        ], [
+            'transaction_format.required' => 'Format nomor transaksi wajib diisi.',
         ]);
 
         $fields = [

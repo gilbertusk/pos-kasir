@@ -64,7 +64,8 @@ class KasirController extends Controller
         ]);
 
         try {
-            $transaction = DB::transaction(fn () => $this->createTransaction($validated, $taxPercent));
+            // Retried on deadlock: two first sales of a new numbering period can briefly lock each other.
+            $transaction = DB::transaction(fn () => $this->createTransaction($validated, $taxPercent), 3);
         } catch (ValidationException $e) {
             throw $e;
         } catch (\Throwable $e) {

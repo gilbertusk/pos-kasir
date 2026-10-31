@@ -325,7 +325,7 @@ class DatabaseSeeder extends Seeder
             'max_discount' => '50',
             'price_rounding' => '0',
             'transaction_format' => 'TRX-{YYYY}-{XXX}',
-            'reset_number' => 'monthly',
+            'reset_number' => 'yearly',
             'printer_size' => '80mm',
             'printer_margin' => '5',
             'auto_print' => '1',

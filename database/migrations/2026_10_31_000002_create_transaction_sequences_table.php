@@ -1,0 +1,27 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+/**
+ * One counter row per numbering period, locked while a sale is saved so two
+ * cashiers can never receive the same transaction number.
+ */
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('transaction_sequences', function (Blueprint $table) {
+            $table->id();
+            $table->string('period')->unique();
+            $table->unsignedInteger('last_number')->default(0);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('transaction_sequences');
+    }
+};
