@@ -43,7 +43,7 @@ Dibangun dengan Laravel 12, Blade, Alpine.js, dan Tailwind CSS.
 ### Transaksi
 - Riwayat transaksi dengan filter tanggal dan pencarian nomor transaksi atau nama kasir.
 - Detail transaksi dan cetak ulang struk.
-- Pembatalan transaksi (owner) yang otomatis mengembalikan stok.
+- Pembatalan transaksi (owner) dari modal detail, wajib dengan alasan. Stok dikembalikan tepat satu kali, dan tercatat siapa serta kapan membatalkan.
 
 ### Laporan dan pengeluaran
 - Ringkasan per rentang tanggal: pendapatan (setelah diskon, tanpa PPN), modal barang terjual, laba kotor, pengeluaran, dan laba bersih.
@@ -195,7 +195,7 @@ Cakupan test utama:
 | `tests/Feature/RoleAccessTest.php` | Pembatasan halaman owner vs kasir |
 | `tests/Feature/ProductManagementTest.php` | Hapus barang aman untuk riwayat, toggle status, pesan validasi tampil |
 | `tests/Feature/UserManagementTest.php` | Proteksi hapus/nonaktifkan akun sendiri dan akun yang punya riwayat |
-| `tests/Feature/TransactionTest.php` | Detail transaksi, pembatalan dan pengembalian stok |
+| `tests/Feature/TransactionTest.php` | Detail transaksi, pembatalan dengan alasan, stok dikembalikan sekali, tombol batal hanya untuk owner |
 | `tests/Feature/TransactionNumberTest.php` | Format dan reset nomor transaksi, nomor tidak bentrok, validasi pengaturan |
 | `tests/Feature/ProfitReportTest.php` | Harga beli tersimpan saat jual, laba kotor dan laba bersih, transaksi batal dan PPN tidak dihitung |
 | `tests/Feature/Auth/*` | Login, akun nonaktif, registrasi dinonaktifkan, reset password |

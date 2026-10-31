@@ -73,7 +73,9 @@ class User extends Authenticatable
      */
     public function hasActivityHistory(): bool
     {
-        return $this->transactions()->exists() || $this->expenses()->exists();
+        return $this->transactions()->exists()
+            || $this->expenses()->exists()
+            || Transaction::where('cancelled_by', $this->getKey())->exists();
     }
 
     /**

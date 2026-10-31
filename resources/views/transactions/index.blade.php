@@ -92,6 +92,11 @@
                         <div><p class="text-xs font-medium text-slate-400 mb-1">Kasir</p><p class="font-bold text-slate-700" x-text="detailData?.user?.name"></p></div>
                         <div><p class="text-xs font-medium text-slate-400 mb-1">Status</p><span class="px-3 py-1 text-xs font-semibold rounded-full capitalize" :class="detailData?.status === 'batal' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'" x-text="detailData?.status"></span></div>
                     </div>
+                    <div x-show="detailData?.status === 'batal'" class="mb-6 rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm">
+                        <p class="font-bold text-rose-700">Dibatalkan</p>
+                        <p class="mt-1 text-rose-700" x-show="detailData?.cancelled_at" x-text="'Oleh ' + (detailData?.canceller?.name || '-') + ', ' + (detailData?.cancelled_at ? new Date(detailData.cancelled_at).toLocaleString('id-ID') : '')"></p>
+                        <p class="mt-1 text-rose-700" x-show="detailData?.cancel_reason" x-text="'Alasan: ' + detailData?.cancel_reason"></p>
+                    </div>
                     <h4 class="text-xs font-medium text-slate-400 mb-3">Item transaksi</h4>
                     <div class="space-y-3 mb-6">
                         <template x-for="item in detailData?.items || []" :key="item.id">
@@ -111,8 +116,24 @@
                         <div x-show="detailData?.change_amount > 0" class="flex justify-between font-bold text-emerald-600"><span class="">Kembali</span><span x-text="formatRupiah(detailData?.change_amount || 0)" class="tabular"></span></div>
                     </div>
                 </div>
-                <div class="flex gap-3 p-6 bg-slate-50 border-t border-slate-100">
+                @if(Auth::user()->isOwner())
+                <form x-show="confirmCancel" x-cloak method="POST" :action="detailData ? '/transactions/' + detailData.id + '/cancel' : '#'" class="space-y-3 border-t border-rose-100 bg-rose-50 p-6">
+                    @csrf
+                    @method('PATCH')
+                    <label for="cancel_reason" class="block text-xs font-medium text-rose-700">Alasan pembatalan *</label>
+                    <input id="cancel_reason" type="text" name="cancel_reason" x-ref="cancelReason" required maxlength="255" placeholder="Contoh: salah input pesanan" class="input-field">
+                    <p class="text-xs text-rose-700">Stok barang akan dikembalikan. Transaksi yang sudah dibatalkan tidak bisa diaktifkan lagi.</p>
+                    <div class="flex gap-3">
+                        <button type="button" @click="confirmCancel = false" class="btn-secondary flex-1">Kembali</button>
+                        <button type="submit" class="btn-danger flex-1">Ya, batalkan</button>
+                    </div>
+                </form>
+                @endif
+                <div x-show="!confirmCancel" class="flex gap-3 p-6 bg-slate-50 border-t border-slate-100">
                     <button @click="showDetail = false" class="btn-secondary flex-1">Tutup</button>
+                    @if(Auth::user()->isOwner())
+                    <button type="button" x-show="detailData?.status === 'lunas'" @click="confirmCancel = true; $nextTick(() => $refs.cancelReason.focus())" class="btn-secondary flex-1 !text-rose-600">Batalkan transaksi</button>
+                    @endif
                     <a :href="detailData ? '/transactions/' + detailData.id + '/receipt' : '#'" target="_blank" class="btn-primary flex-1 text-center">🖨 Cetak</a>
                 </div>
             </div>
@@ -124,12 +145,14 @@
         return {
             showDetail: false,
             detailData: null,
+            confirmCancel: false,
 
             async fetchDetail(id) {
                 try {
                     const res = await fetch(`/transactions/${id}`, { headers: { 'Accept': 'application/json' } });
                     if (!res.ok) throw new Error(`HTTP ${res.status}`);
                     this.detailData = await res.json();
+                    this.confirmCancel = false;
                     this.showDetail = true;
                 } catch (e) {
                     alert('Gagal memuat detail transaksi. Silakan coba lagi.');

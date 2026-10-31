@@ -23,6 +23,9 @@ use Illuminate\Support\Facades\DB;
  * @property float $paid_amount
  * @property float $change_amount
  * @property string $status
+ * @property int|null $cancelled_by
+ * @property \Illuminate\Support\Carbon|null $cancelled_at
+ * @property string|null $cancel_reason
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User $user
@@ -48,6 +51,9 @@ class Transaction extends Model
         'paid_amount',
         'change_amount',
         'status',
+        'cancelled_by',
+        'cancelled_at',
+        'cancel_reason',
     ];
 
     protected $casts = [
@@ -59,11 +65,52 @@ class Transaction extends Model
         'total' => 'decimal:0',
         'paid_amount' => 'decimal:0',
         'change_amount' => 'decimal:0',
+        'cancelled_at' => 'datetime',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function canceller()
+    {
+        return $this->belongsTo(User::class, 'cancelled_by');
+    }
+
+    /**
+     * Cancel a paid sale and put its stock back, exactly once.
+     * The row is re-read under a lock, so a double click or two owners cancelling
+     * at the same time can not restore stock twice.
+     *
+     * @return bool false when the sale was already cancelled
+     */
+    public function cancel(User $by, string $reason): bool
+    {
+        $cancelled = DB::transaction(function () use ($by, $reason) {
+            $locked = static::whereKey($this->getKey())->lockForUpdate()->first();
+
+            if (! $locked || $locked->status === 'batal') {
+                return false;
+            }
+
+            $locked->update([
+                'status' => 'batal',
+                'cancelled_by' => $by->id,
+                'cancelled_at' => now(),
+                'cancel_reason' => $reason,
+            ]);
+
+            foreach ($locked->items()->get() as $item) {
+                Product::whereKey($item->product_id)->increment('stock', $item->quantity);
+            }
+
+            return true;
+        }, 3);
+
+        $this->refresh();
+
+        return $cancelled;
     }
 
     public function items()

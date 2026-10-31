@@ -42,26 +42,23 @@ class TransactionController extends Controller
 
     public function show(Transaction $transaction)
     {
-        $transaction->load('items.product', 'user');
+        $transaction->load('items.product', 'user', 'canceller:id,name');
         return response()->json($transaction);
     }
 
-    public function cancel(Transaction $transaction)
+    public function cancel(Request $request, Transaction $transaction)
     {
-        if ($transaction->status === 'batal') {
+        $validated = $request->validate([
+            'cancel_reason' => 'required|string|max:255',
+        ], [
+            'cancel_reason.required' => 'Alasan pembatalan wajib diisi.',
+        ]);
+
+        if (! $transaction->cancel($request->user(), $validated['cancel_reason'])) {
             return redirect()->back()->with('error', 'Transaksi sudah dibatalkan.');
         }
 
-        $transaction->update(['status' => 'batal']);
-
-        // Kembalikan stok
-        foreach ($transaction->items as $item) {
-            if ($item->product) {
-                $item->product->increment('stock', $item->quantity);
-            }
-        }
-
-        return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil dibatalkan.');
+        return redirect()->back()->with('success', "Transaksi {$transaction->transaction_number} dibatalkan dan stok dikembalikan.");
     }
 
     public function receipt(Transaction $transaction)
