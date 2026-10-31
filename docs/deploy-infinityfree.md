@@ -17,7 +17,9 @@ graph TD
     E --> F[Buat Database & Impor SQL di InfinityFree]
     F --> G[Konfigurasi .env di Server]
     G --> H[Jalankan Script Symlink Storage]
-    H --> I[Aplikasi Siap Digunakan!]
+    H --> I[Cache Konfigurasi]
+    I --> J[Daftar Periksa Production]
+    J --> K[Aplikasi Siap Digunakan!]
 ```
 
 ---
@@ -111,61 +113,95 @@ Laravel menyimpan berkas unggahan di `storage/app/public` dan membutuhkan link s
 Kami telah membuat skrip pembantu otomatis untuk Anda. 
 
 > [!IMPORTANT]
-> Skrip pembantu (`storage-link.php` dan `unzip.php`) disimpan di folder **`deploy/`** proyek, **bukan** di `public/`, karena siapa pun bisa menjalankannya tanpa login. Salin ke `public/` di server hanya saat dibutuhkan, lalu segera hapus lagi setelah dijalankan.
+> Skrip pembantu (`storage-link.php`, `unzip.php`, `clear-cache.php`, `migrate.php`) disimpan di folder **`deploy/`** proyek, **bukan** di `public/`, karena siapa pun bisa menjalankannya tanpa login. Salin ke `public/` di server hanya saat dibutuhkan, lalu segera hapus lagi setelah dijalankan.
 
 ### Cara Membuat Symlink secara Otomatis:
-1. Buat file baru bernama **`storage-link.php`** di dalam folder **`public`** di server Anda (atau buat secara lokal lalu unggah).
-2. Isi file tersebut dengan kode berikut:
-
-```php
-<?php
-// storage-link.php
-
-$targetFolder = $_SERVER['DOCUMENT_ROOT'] . '/../storage/app/public';
-// Jika htdocs adalah DOCUMENT_ROOT Anda:
-if (!is_dir($targetFolder)) {
-    $targetFolder = dirname(__DIR__) . '/storage/app/public';
-}
-
-$linkFolder = $_SERVER['DOCUMENT_ROOT'] . '/storage';
-if (!is_dir(dirname($linkFolder))) {
-    $linkFolder = dirname(__DIR__) . '/public/storage';
-}
-
-if (file_exists($linkFolder)) {
-    echo "Folder /public/storage sudah ada.<br>";
-} else {
-    if (symlink($targetFolder, $linkFolder)) {
-        echo "Symlink berhasil dibuat!<br>";
-        echo "Dari: $targetFolder<br>";
-        echo "Ke: $linkFolder<br>";
-    } else {
-        echo "Gagal membuat symlink. Silakan hubungi administrator atau buat manual.<br>";
-    }
-}
-```
-
-3. Akses skrip tersebut melalui browser Anda di URL:
+1. Salin file **`deploy/storage-link.php`** dari proyek ke folder **`public/`** di server.
+2. Akses skrip tersebut melalui browser Anda di URL:
    `https://poskasir.infinityfreeapp.com/storage-link.php` (Ganti dengan domain Anda).
-4. Jika tertulis **"Symlink berhasil dibuat!"**, maka konfigurasi selesai.
-5. **PENTING:** Demi keamanan, segera **HAPUS** file `storage-link.php` dari server setelah berhasil dijalankan agar tidak disalahgunakan oleh pihak lain.
+3. Jika tertulis **"Symlink berhasil dibuat!"**, maka konfigurasi selesai.
+4. **PENTING:** Demi keamanan, segera **HAPUS** file `storage-link.php` dari server setelah berhasil dijalankan agar tidak disalahgunakan oleh pihak lain.
+
+---
+
+## Langkah 6: Cache Konfigurasi
+
+Supaya aplikasi lebih cepat, simpan konfigurasi, route, dan view di cache:
+
+1. Buka `deploy/clear-cache.php`, isi `$secret` dengan teks acak minimal 20 karakter.
+2. Salin ke folder `public/` di server.
+3. Buka `https://domain-anda.com/clear-cache.php?key=ISI_SECRET`.
+4. **Segera hapus** `clear-cache.php` dari server.
+
+Skrip ini menjalankan `optimize:clear`, lalu `config:cache`, `route:cache`, dan `view:cache`. Jalankan lagi setiap kali `.env` di server diubah, karena konfigurasi yang sudah di-cache tidak membaca ulang `.env`.
+
+---
+
+## Memperbarui Aplikasi yang Sudah Online
+
+Jangan impor ulang database saat update, karena data penjualan di server akan tertimpa. Ikuti urutan ini:
+
+1. **Backup database server** lewat phpMyAdmin (tab **Export**). Simpan file `.sql`-nya.
+2. Di komputer lokal, jalankan `npm run build` dan `composer install --no-dev --optimize-autoloader`.
+3. Unggah file yang berubah lewat FTP (minimal `app/`, `config/`, `database/`, `resources/`, `routes/`, `public/build/`, dan `vendor/` jika dependensi berubah). Jangan timpa `.env` dan `storage/app/public/` di server.
+4. Jalankan migration baru:
+   - Buka `deploy/migrate.php`, isi `$secret`, salin ke `public/` di server.
+   - Buka `https://domain-anda.com/migrate.php?key=ISI_SECRET` untuk melihat migration yang berstatus **Pending**.
+   - Buka `https://domain-anda.com/migrate.php?key=ISI_SECRET&run=1` untuk menjalankannya.
+   - **Segera hapus** `migrate.php` dari server.
+5. Jalankan `clear-cache.php` seperti di Langkah 6, lalu hapus lagi.
+6. Coba login, lakukan satu transaksi uji, cetak struknya, lalu batalkan transaksi itu dari Riwayat Transaksi.
+
+> [!WARNING]
+> Update Oktober 2026 menambah 3 migration: harga modal di item transaksi, counter nomor transaksi, dan data pembatalan. Tanpa migration ini halaman Kasir, Transaksi, dan Laporan akan error.
+
+---
+
+## Daftar Periksa Production
+
+Centang semua sebelum aplikasi dipakai untuk usaha sungguhan.
+
+**Konfigurasi `.env` di server**
+- [ ] `APP_ENV=production` dan `APP_DEBUG=false`. Dengan debug aktif, pesan error menampilkan password database.
+- [ ] `APP_KEY` terisi, dan sama dengan yang dipakai sejak awal. Mengganti `APP_KEY` membuat semua user ter-logout.
+- [ ] `APP_URL` lengkap dengan `https://`, misalnya `https://poskasir.kesug.com`. Tanpa skema, link dan aset bisa salah alamat.
+- [ ] `APP_TIMEZONE=Asia/Jakarta` (atau zona waktu toko).
+- [ ] `LOG_LEVEL=error` supaya file log tidak cepat penuh.
+- [ ] `DB_*` sesuai database InfinityFree (host seperti `sqlXXX.infinityfree.com`, bukan `localhost`).
+- [ ] `CACHE_STORE` dan `SESSION_DRIVER` diisi `file` atau `database`. Batas request (rate limit) dan cache pengaturan memakai cache ini.
+- [ ] `GEMINI_API_KEY` diisi jika AI Assistant dipakai. Setelah mengubahnya, jalankan `clear-cache.php`.
+
+**Data dan akun**
+- [ ] Semua migration sudah jalan (cek lewat `migrate.php` tanpa `&run=1`, tidak ada yang **Pending**).
+- [ ] Password akun demo `owner@pos.com` dan `kasir@pos.com` sudah diganti, atau akunnya dinonaktifkan.
+- [ ] Profil toko, PPN, format nomor transaksi, ukuran kertas, dan margin struk sudah diatur di halaman **Pengaturan**.
+- [ ] Data contoh dari seeder (produk, transaksi, pengeluaran) dihapus jika tidak dipakai, supaya laporan tidak tercampur.
+
+**File di server**
+- [ ] Tidak ada skrip bantu yang tertinggal di `public/`: `storage-link.php`, `unzip.php`, `clear-cache.php`, `migrate.php`.
+- [ ] `https://domain-anda.com/.env` menampilkan error 403/404, bukan isi file.
+- [ ] Folder `node_modules/`, `.git/`, dan `tests/` tidak ikut diunggah.
+- [ ] `public/build/` ada (hasil `npm run build`), dan foto produk tampil (symlink storage berhasil).
+
+**Uji coba**
+- [ ] Login sebagai kasir: menu Produk, Laporan, Pengeluaran, dan Pengaturan tidak muncul.
+- [ ] Satu transaksi uji berhasil, struk tercetak pas di kertas printer, nomor transaksi sesuai format.
+- [ ] Transaksi uji dibatalkan dengan alasan, stok kembali, dan transaksi tidak dihitung di Laporan.
+
+**Rutin**
+- [ ] Backup database lewat phpMyAdmin minimal seminggu sekali, dan selalu sebelum update.
 
 ---
 
 ## Troubleshooting & Tips Tambahan
 
 * **Error 500 (Internal Server Error)**: 
-  Biasanya disebabkan oleh versi PHP yang tidak cocok (pastikan versi PHP di InfinityFree diatur ke **PHP 8.2** atau **PHP 8.3** agar sesuai dengan kebutuhan Laravel 11) atau ada kesalahan penulisan di file `.env`.
+  Biasanya disebabkan oleh versi PHP yang tidak cocok (pastikan versi PHP di InfinityFree diatur ke **PHP 8.2** atau **PHP 8.3** agar sesuai dengan kebutuhan Laravel 12) atau ada kesalahan penulisan di file `.env`.
 * **Error "Database connection refused"**:
   Periksa kembali `DB_HOST` dan `DB_PASSWORD` di `.env`. Host database di InfinityFree bukan `127.0.0.1` atau `localhost`, melainkan nama host khusus seperti `sqlXXX.infinityfree.com`.
-* **Mengosongkan Cache**:
-  Jika Anda mengubah sesuatu dan ingin membersihkan cache aplikasi tanpa SSH, Anda bisa membuat file `clear-cache.php` di folder `public` dengan kode:
-  ```php
-  <?php
-  require __DIR__.'/../bootstrap/app.php';
-  Artisan::call('config:clear');
-  Artisan::call('cache:clear');
-  Artisan::call('view:clear');
-  echo "Cache berhasil dibersihkan!";
-  ```
-  Lalu akses lewat browser dan segera hapus file tersebut setelah digunakan.
+* **Perubahan `.env` atau pengaturan tidak terbaca**:
+  Jalankan `deploy/clear-cache.php` (lihat Langkah 6). Ini juga diperlukan jika tabel `settings` diubah langsung lewat phpMyAdmin.
+* **Error "Table ... doesn't exist" setelah update**:
+  Ada migration yang belum dijalankan. Lihat bagian [Memperbarui Aplikasi yang Sudah Online](#memperbarui-aplikasi-yang-sudah-online).
+* **Pesan "Terlalu banyak permintaan"**:
+  Batas AI Assistant 10 permintaan per menit per akun, checkout 60 per menit. Tunggu satu menit.

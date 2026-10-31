@@ -203,6 +203,7 @@ Cakupan test utama:
 | `tests/Feature/RateLimitTest.php` | Batas request AI (10/menit, per akun) dan checkout (60/menit), reset setelah satu menit |
 | `tests/Feature/ReceiptTest.php` | Struk membaca profil toko, ukuran kertas, margin, cetak otomatis, tanda batal; satu sumber struk di kasir dan cetak ulang |
 | `tests/Feature/ProfitReportTest.php` | Harga beli tersimpan saat jual, laba kotor dan laba bersih, transaksi batal tidak dihitung, pendapatan termasuk PPN |
+| `tests/Feature/AppConfigurationTest.php` | Zona waktu, skrip deploy tidak di `public/` dan wajib secret, tidak ada `env()` di kode aplikasi, konfigurasi Gemini |
 | `tests/Feature/Auth/*` | Login, akun nonaktif, registrasi dinonaktifkan, reset password |
 
 ---
@@ -259,9 +260,28 @@ npm run build
 composer install --no-dev --optimize-autoloader
 ```
 
-Lalu unggah file, impor database, sesuaikan `.env` di server (`APP_ENV=production`, `APP_DEBUG=false`), dan buat symlink storage.
+Lalu unggah file, impor database, sesuaikan `.env` di server (`APP_ENV=production`, `APP_DEBUG=false`), dan buat symlink storage. Saat update aplikasi yang sudah online, jalankan migration lewat `deploy/migrate.php`, jangan impor ulang database.
 
-Untuk server dengan akses SSH, cukup jalankan `php artisan migrate --force`, `php artisan storage:link`, dan `php artisan config:cache` setelah upload.
+Untuk server dengan akses SSH:
+
+```bash
+php artisan migrate --force
+php artisan storage:link
+php artisan optimize
+```
+
+### Daftar periksa production
+
+Versi lengkap ada di [docs/deploy-infinityfree.md](docs/deploy-infinityfree.md#daftar-periksa-production).
+
+- [ ] `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` lengkap dengan `https://`, `LOG_LEVEL=error`.
+- [ ] Semua migration sudah jalan, tidak ada yang **Pending**.
+- [ ] Password akun demo diganti atau akunnya dinonaktifkan.
+- [ ] Profil toko, PPN, format nomor transaksi, dan ukuran kertas struk diatur di **Pengaturan**.
+- [ ] Tidak ada skrip `deploy/*.php` yang tertinggal di `public/`.
+- [ ] Konfigurasi di-cache (`php artisan optimize` atau `deploy/clear-cache.php`), dan diulang setiap `.env` berubah.
+- [ ] Satu transaksi uji berhasil, struk tercetak pas, lalu dibatalkan.
+- [ ] Backup database rutin, dan selalu sebelum update.
 
 ---
 
@@ -269,7 +289,8 @@ Untuk server dengan akses SSH, cukup jalankan `php artisan migrate --force`, `ph
 
 - Jangan pernah meng-commit `.env`, file `.env.*` berisi kredensial, dump database, atau arsip ZIP berisi project. Semuanya sudah dimasukkan ke `.gitignore`.
 - Matikan `APP_DEBUG` di production.
-- Skrip di folder `deploy/` bisa dijalankan siapa saja tanpa login; salin ke server hanya saat dibutuhkan dan langsung hapus setelahnya.
+- Skrip di folder `deploy/` tidak memakai login aplikasi; salin ke server hanya saat dibutuhkan dan langsung hapus setelahnya. `clear-cache.php` dan `migrate.php` menolak akses sampai `$secret` diisi (minimal 20 karakter) dan dikirim lewat `?key=`.
+- Kode aplikasi membaca `config()`, bukan `env()`, supaya tetap jalan setelah `config:cache`. Test `AppConfigurationTest` menjaga aturan ini.
 - Ganti atau hapus akun demo sebelum dipakai untuk usaha sungguhan.
 - Batas jumlah request per akun: AI Assistant (chat dan ringkasan stok digabung) 10 per menit untuk menjaga kuota Gemini, checkout 60 per menit. Request yang melewati batas mendapat status 429 dengan pesan berbahasa Indonesia.
 

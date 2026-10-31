@@ -95,8 +95,8 @@ class AiAssistantController extends Controller
             'message.max' => 'Pesan maksimal 1000 karakter.'
         ]);
 
-        $apiKey = env('GEMINI_API_KEY');
-        $model = env('GEMINI_MODEL', 'gemini-2.5-flash-lite');
+        $apiKey = config('services.gemini.key');
+        $model = config('services.gemini.model');
 
         if (empty($apiKey)) {
             return response()->json([
