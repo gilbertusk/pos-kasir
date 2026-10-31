@@ -1,10 +1,11 @@
 <x-app-layout>
     @section('title', 'Barang & Stok')
-    <div x-data="{ showAddModal: false, showEditModal: false, editProduct: {} }">
+    <div x-data="{ showAddModal: false, showEditModal: false, editProduct: {}, showStockModal: false, stockProduct: {}, stockType: 'masuk' }">
         {{-- Header Actions --}}
         <div class="flex items-center justify-between mb-8">
             <div></div>
             <div class="flex gap-3">
+                <a href="{{ route('products.stockHistory') }}" class="btn-secondary !rounded-xl !py-3 shadow-sm"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>Riwayat Stok</a>
                 <a href="{{ route('products.exportPdf') }}" class="btn-secondary !rounded-xl !py-3 shadow-sm"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Ekspor PDF</a>
                 <button @click="showAddModal = true" class="btn-primary !rounded-xl !py-3 shadow-primary-200"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>Tambah Barang</button>
             </div>
@@ -70,6 +71,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-center gap-1">
+                                    <button @click="stockProduct = {{ Js::from($product->only('id', 'name', 'stock', 'unit')) }}; stockType = 'masuk'; showStockModal = true" class="p-1.5 rounded-lg hover:bg-brand-50 text-brand-700" title="Ubah stok" aria-label="Ubah stok {{ $product->name }}"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg></button>
                                     <button @click="editProduct = {{ $product->toJson() }}; showEditModal = true" class="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 text-blue-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
                                     <form method="POST" action="{{ route('products.toggle', $product) }}">@csrf @method('PATCH')
                                         <button class="p-1.5 rounded-lg hover:bg-amber-50 text-amber-600" title="{{ $product->is_active ? 'Nonaktifkan' : 'Aktifkan' }}" aria-label="{{ $product->is_active ? 'Nonaktifkan' : 'Aktifkan' }} {{ $product->name }}"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 11-12.728 0M12 3v9"/></svg></button>
@@ -148,12 +150,63 @@
                         <div><label class="block text-xs font-medium text-slate-400 mb-1">Harga jual *</label><input type="number" name="sell_price" :value="editProduct.sell_price" min="0" required class="input-field"></div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-xs font-medium text-slate-400 mb-1">Stok *</label><input type="number" name="stock" :value="editProduct.stock" min="0" required class="input-field"></div>
+                        <div>
+                            <span class="block text-xs font-medium text-slate-400 mb-1">Stok saat ini</span>
+                            <p class="input-field bg-slate-50 tabular" x-text="editProduct.stock"></p>
+                            <p class="mt-1 text-xs text-slate-400">Ubah lewat tombol stok supaya tercatat di riwayat.</p>
+                        </div>
                         <div><label class="block text-xs font-medium text-slate-400 mb-1">Min. stok *</label><input type="number" name="min_stock" :value="editProduct.min_stock" min="0" required class="input-field"></div>
                     </div>
                     <div class="flex gap-3 pt-4">
                         <button type="button" @click="showEditModal = false" class="btn-secondary flex-1">Batal</button>
                         <button type="submit" class="btn-primary flex-1">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {{-- Stock Modal --}}
+        <div x-show="showStockModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm" @click.self="showStockModal = false" @keydown.escape.window="showStockModal = false">
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 overflow-hidden flex flex-col" role="dialog" aria-modal="true" aria-labelledby="stock-modal-title">
+                <div class="flex items-center justify-between p-6 border-b border-slate-100">
+                    <div>
+                        <h3 id="stock-modal-title" class="text-lg font-bold text-slate-800">Ubah Stok</h3>
+                        <p class="text-sm text-slate-500"><span x-text="stockProduct.name"></span> · stok sekarang <span class="tabular font-bold text-slate-800" x-text="stockProduct.stock"></span> <span x-text="stockProduct.unit"></span></p>
+                    </div>
+                    <button type="button" @click="showStockModal = false" class="p-2 rounded-xl hover:bg-slate-100 transition-colors" aria-label="Tutup"><svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                </div>
+                <form :action="'/products/' + stockProduct.id + '/stock'" method="POST" class="p-6 space-y-4">
+                    @csrf
+                    <fieldset class="grid grid-cols-2 gap-2">
+                        <legend class="sr-only">Jenis perubahan</legend>
+                        <label class="cursor-pointer rounded-xl border p-3 text-sm" :class="stockType === 'masuk' ? 'border-brand-600 bg-brand-50 text-brand-800' : 'border-slate-200 text-slate-600'">
+                            <input type="radio" name="type" value="masuk" x-model="stockType" class="sr-only">
+                            <span class="block font-bold">Stok masuk</span>
+                            <span class="text-xs">Tambah dari belanja/supplier</span>
+                        </label>
+                        <label class="cursor-pointer rounded-xl border p-3 text-sm" :class="stockType === 'penyesuaian' ? 'border-brand-600 bg-brand-50 text-brand-800' : 'border-slate-200 text-slate-600'">
+                            <input type="radio" name="type" value="penyesuaian" x-model="stockType" class="sr-only">
+                            <span class="block font-bold">Penyesuaian</span>
+                            <span class="text-xs">Samakan dengan hasil hitung</span>
+                        </label>
+                    </fieldset>
+                    <div x-show="stockType === 'masuk'">
+                        <label for="stock-quantity" class="block text-xs font-medium text-slate-400 mb-1">Jumlah masuk *</label>
+                        <input id="stock-quantity" type="number" name="quantity" min="1" class="input-field" :required="stockType === 'masuk'" :disabled="stockType !== 'masuk'">
+                    </div>
+                    <div x-show="stockType === 'penyesuaian'" x-cloak>
+                        <label for="stock-actual" class="block text-xs font-medium text-slate-400 mb-1">Stok hasil hitung *</label>
+                        <input id="stock-actual" type="number" name="actual_stock" min="0" class="input-field" :required="stockType === 'penyesuaian'" :disabled="stockType !== 'penyesuaian'">
+                    </div>
+                    <div>
+                        <label for="stock-note" class="block text-xs font-medium text-slate-400 mb-1">
+                            <span x-text="stockType === 'penyesuaian' ? 'Alasan *' : 'Catatan'"></span>
+                        </label>
+                        <input id="stock-note" type="text" name="note" maxlength="255" class="input-field" :required="stockType === 'penyesuaian'" :placeholder="stockType === 'penyesuaian' ? 'Misalnya: 3 bungkus rusak' : 'Misalnya: belanja pasar, supplier'">
+                    </div>
+                    <div class="flex gap-3 pt-2">
+                        <button type="button" @click="showStockModal = false" class="btn-secondary flex-1">Batal</button>
+                        <button type="submit" class="btn-primary flex-1">Simpan Stok</button>
                     </div>
                 </form>
             </div>

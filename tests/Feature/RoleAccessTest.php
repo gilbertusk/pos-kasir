@@ -18,6 +18,7 @@ class RoleAccessTest extends TestCase
         return [
             'products' => ['/products'],
             'products pdf' => ['/products/export-pdf'],
+            'stock history' => ['/products/stock-history'],
             'reports' => ['/reports'],
             'reports data' => ['/reports/data'],
             'expenses' => ['/expenses'],

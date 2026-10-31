@@ -105,7 +105,8 @@ class Transaction extends Model
             ]);
 
             foreach ($locked->items()->get() as $item) {
-                Product::whereKey($item->product_id)->increment('stock', $item->quantity);
+                Product::lockForUpdate()->find($item->product_id)
+                    ?->moveStock($item->quantity, 'batal', $by->id, $reason, $locked->id);
             }
 
             return true;

@@ -98,9 +98,11 @@ class KasirController extends Controller
     {
         $subtotal = 0;
         $itemsData = [];
+        $lockedProducts = [];
 
         foreach ($validated['items'] as $item) {
             $product = Product::lockForUpdate()->findOrFail($item['product_id']);
+            $lockedProducts[$product->id] = $product;
 
             if (! $product->is_active) {
                 throw ValidationException::withMessages([
@@ -171,7 +173,9 @@ class KasirController extends Controller
                 'transaction_id' => $transaction->id,
             ]));
 
-            Product::whereKey($itemData['product_id'])->decrement('stock', $itemData['quantity']);
+            $lockedProducts[$itemData['product_id']]->moveStock(
+                -$itemData['quantity'], 'penjualan', Auth::id(), null, $transaction->id
+            );
         }
 
         return $transaction;

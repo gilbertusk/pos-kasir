@@ -157,7 +157,8 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($products as $product) {
-            Product::create($product);
+            Product::create(['stock' => 0] + $product)
+                ->moveStock($product['stock'], 'awal', $owner->id, 'Stok awal data contoh');
         }
 
         // === TRANSACTIONS ===

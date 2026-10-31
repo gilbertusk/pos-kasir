@@ -153,7 +153,7 @@ Jangan impor ulang database saat update, karena data penjualan di server akan te
 6. Coba login, lakukan satu transaksi uji, cetak struknya, lalu batalkan transaksi itu dari Riwayat Transaksi.
 
 > [!WARNING]
-> Update Oktober 2026 menambah 4 migration: harga modal di item transaksi, counter nomor transaksi, data pembatalan, dan pembulatan harga. Tanpa migration ini halaman Kasir, Transaksi, dan Laporan akan error.
+> Update Oktober 2026 menambah 5 migration: harga modal di item transaksi, counter nomor transaksi, data pembatalan, pembulatan harga, dan riwayat stok. Tanpa migration ini halaman Kasir, Transaksi, dan Laporan akan error.
 
 ---
 

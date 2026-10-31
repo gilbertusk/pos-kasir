@@ -36,6 +36,8 @@ Dibangun dengan Laravel 12, Blade, Alpine.js, dan Tailwind CSS.
 ### Inventaris
 - Tambah, ubah, hapus, dan aktif/nonaktifkan barang, lengkap dengan foto.
 - Peringatan stok menipis (stok ≤ stok minimum).
+- Ubah stok lewat tombol stok di tiap barang: **stok masuk** (tambah dari belanja/supplier) atau **penyesuaian** (samakan dengan hasil hitung, wajib alasan). Form edit barang tidak lagi mengubah stok.
+- Riwayat stok mencatat setiap perubahan (stok awal, stok masuk, penyesuaian, penjualan, batal transaksi): siapa, kapan, berapa, stok sebelum dan sesudah, serta alasan atau nomor transaksi. Bisa difilter per barang, jenis, dan tanggal.
 - Barang yang sudah pernah terjual tidak bisa dihapus agar riwayat penjualan tetap utuh; cukup dinonaktifkan.
 - Ekspor daftar barang ke PDF.
 - AI Assistant (Gemini) untuk menanyakan kondisi stok dan rekomendasi restock. Lihat [docs/ai-assistant-gemini.md](docs/ai-assistant-gemini.md).
@@ -200,6 +202,7 @@ Cakupan test utama:
 | `tests/Feature/UserManagementTest.php` | Proteksi hapus/nonaktifkan akun sendiri dan akun yang punya riwayat |
 | `tests/Feature/TransactionTest.php` | Detail transaksi, pembatalan dengan alasan, stok dikembalikan sekali, tombol batal hanya untuk owner |
 | `tests/Feature/TransactionNumberTest.php` | Format dan reset nomor transaksi, nomor tidak bentrok, validasi pengaturan |
+| `tests/Feature/StockMovementTest.php` | Stok masuk dan penyesuaian, validasi, edit barang tidak mengubah stok, penjualan dan pembatalan tercatat, riwayat cocok dengan stok |
 | `tests/Feature/SettingCacheTest.php` | Pengaturan dibaca dari database sekali, perubahan langsung terlihat |
 | `tests/Feature/RateLimitTest.php` | Batas request AI (10/menit, per akun) dan checkout (60/menit), reset setelah satu menit |
 | `tests/Feature/ReceiptTest.php` | Struk membaca profil toko, ukuran kertas, margin, cetak otomatis, baris pembulatan, tanda batal; satu sumber struk di kasir dan cetak ulang |

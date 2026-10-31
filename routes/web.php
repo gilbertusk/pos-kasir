@@ -39,6 +39,8 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
         Route::patch('/products/{product}/toggle', [ProductController::class, 'toggleStatus'])->name('products.toggle');
         Route::get('/products/export-pdf', [ProductController::class, 'exportPdf'])->name('products.exportPdf');
+        Route::get('/products/stock-history', [ProductController::class, 'stockHistory'])->name('products.stockHistory');
+        Route::post('/products/{product}/stock', [ProductController::class, 'adjustStock'])->name('products.adjustStock');
 
         // Transactions
         Route::patch('/transactions/{transaction}/cancel', [TransactionController::class, 'cancel'])->name('transactions.cancel');

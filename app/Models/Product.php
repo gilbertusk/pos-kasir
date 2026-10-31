@@ -74,6 +74,31 @@ class Product extends Model
         return $this->hasMany(TransactionItem::class);
     }
 
+    public function stockMovements()
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
+    /**
+     * Change the stock and record why. Call inside a database transaction on a row
+     * read with lockForUpdate() (or created in that transaction), so stock_before is current.
+     */
+    public function moveStock(int $change, string $type, ?int $userId, ?string $note = null, ?int $transactionId = null): StockMovement
+    {
+        $before = $this->stock;
+        $this->forceFill(['stock' => $before + $change])->save();
+
+        return $this->stockMovements()->create([
+            'user_id' => $userId,
+            'transaction_id' => $transactionId,
+            'type' => $type,
+            'quantity' => $change,
+            'stock_before' => $before,
+            'stock_after' => $this->stock,
+            'note' => $note,
+        ]);
+    }
+
     public function isLowStock(): bool
     {
         return $this->stock <= $this->min_stock;

@@ -69,13 +69,14 @@ class User extends Authenticatable
     }
 
     /**
-     * Whether the user has recorded sales or expenses that must be preserved.
+     * Whether the user has recorded sales, expenses or stock changes that must be preserved.
      */
     public function hasActivityHistory(): bool
     {
         return $this->transactions()->exists()
             || $this->expenses()->exists()
-            || Transaction::where('cancelled_by', $this->getKey())->exists();
+            || Transaction::where('cancelled_by', $this->getKey())->exists()
+            || StockMovement::where('user_id', $this->getKey())->exists();
     }
 
     /**
