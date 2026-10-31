@@ -56,6 +56,7 @@ Dibangun dengan Laravel 12, Blade, Alpine.js, dan Tailwind CSS.
 - Struk: ukuran kertas 58mm/80mm, margin, dan cetak otomatis setelah bayar. Layar kasir dan cetak ulang memakai halaman struk yang sama. Struk transaksi batal ditandai "DIBATALKAN".
 - Pajak dan diskon: aktif/nonaktif PPN, persentase PPN, batas diskon maksimal.
 - Format nomor transaksi (`{YYYY}`, `{YY}`, `{MM}`, `{DD}`, `{XXX}`) dengan reset harian, bulanan, tahunan, atau tidak pernah. Nomor dijamin unik walau beberapa kasir membayar bersamaan.
+- Pengaturan disimpan di cache dan langsung diperbarui setiap kali disimpan dari halaman Pengaturan. Jika tabel `settings` diubah langsung di database (misalnya lewat phpMyAdmin), jalankan `php artisan cache:clear` supaya perubahan terbaca.
 - Manajemen pengguna: tambah akun owner/kasir dan nonaktifkan akun. Akun yang dinonaktifkan langsung tidak bisa login.
 
 ---
@@ -198,6 +199,7 @@ Cakupan test utama:
 | `tests/Feature/UserManagementTest.php` | Proteksi hapus/nonaktifkan akun sendiri dan akun yang punya riwayat |
 | `tests/Feature/TransactionTest.php` | Detail transaksi, pembatalan dengan alasan, stok dikembalikan sekali, tombol batal hanya untuk owner |
 | `tests/Feature/TransactionNumberTest.php` | Format dan reset nomor transaksi, nomor tidak bentrok, validasi pengaturan |
+| `tests/Feature/SettingCacheTest.php` | Pengaturan dibaca dari database sekali, perubahan langsung terlihat |
 | `tests/Feature/RateLimitTest.php` | Batas request AI (10/menit, per akun) dan checkout (60/menit), reset setelah satu menit |
 | `tests/Feature/ReceiptTest.php` | Struk membaca profil toko, ukuran kertas, margin, cetak otomatis, tanda batal; satu sumber struk di kasir dan cetak ulang |
 | `tests/Feature/ProfitReportTest.php` | Harga beli tersimpan saat jual, laba kotor dan laba bersih, transaksi batal tidak dihitung, pendapatan termasuk PPN |
