@@ -21,6 +21,7 @@ class RoleAccessTest extends TestCase
             'stock history' => ['/products/stock-history'],
             'reports' => ['/reports'],
             'reports data' => ['/reports/data'],
+            'reports export' => ['/reports/export?format=csv&report=harian'],
             'expenses' => ['/expenses'],
             'settings' => ['/settings'],
             'ai insight' => ['/ai/insight'],

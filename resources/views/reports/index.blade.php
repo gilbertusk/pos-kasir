@@ -11,7 +11,17 @@
                     <input type="date" x-model="endDate" @change="loadData()" class="border-0 text-sm font-bold text-slate-700 focus:ring-0 p-0 bg-transparent cursor-pointer">
                 </div>
             </div>
-            <button @click="window.print()" class="btn-secondary !rounded-xl !py-3 shadow-sm"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>Cetak Laporan</button>
+            <div class="flex flex-wrap gap-2">
+                <a :href="exportUrl('pdf')" class="btn-secondary !rounded-xl !py-3 shadow-sm">Ekspor PDF</a>
+                <div class="relative" x-data="{ open: false }">
+                    <button type="button" @click="open = !open" @click.outside="open = false" class="btn-secondary !rounded-xl !py-3 shadow-sm">Ekspor CSV <span aria-hidden="true">▾</span></button>
+                    <div x-show="open" x-cloak class="absolute right-0 z-20 mt-2 w-60 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-xl">
+                        <a :href="exportUrl('csv', 'harian')" class="block px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">Ringkasan per hari</a>
+                        <a :href="exportUrl('csv', 'transaksi')" class="block px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">Rincian transaksi</a>
+                        <a :href="exportUrl('csv', 'pengeluaran')" class="block px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">Rincian pengeluaran</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
         {{-- Summary Cards --}}
@@ -93,13 +103,19 @@
     <script>
     function reportApp() {
         return {
-            startDate: new Date(Date.now() - 6*86400000).toISOString().split('T')[0],
-            endDate: new Date().toISOString().split('T')[0],
+            startDate: @js($defaultStart),
+            endDate: @js($defaultEnd),
             activeTab: 'pendapatan',
             summary: { total_transactions: 0, total_revenue: 0, total_cogs: 0, gross_profit: 0, total_expenses: 0, net_profit: 0 },
             charts: {},
 
             formatRp(n) { return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); },
+
+            exportUrl(format, report = '') {
+                const params = new URLSearchParams({ format, start_date: this.startDate, end_date: this.endDate });
+                if (report) params.set('report', report);
+                return `{{ route('reports.export') }}?${params.toString()}`;
+            },
 
             async loadData() {
                 const res = await fetch(`{{ route('reports.data') }}?start_date=${this.startDate}&end_date=${this.endDate}`);

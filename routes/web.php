@@ -48,6 +48,7 @@ Route::middleware(['auth'])->group(function () {
         // Reports
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/data', [ReportController::class, 'getData'])->name('reports.data');
+        Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
 
         // Expenses
         Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');

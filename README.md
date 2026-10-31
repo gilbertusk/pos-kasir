@@ -51,6 +51,7 @@ Dibangun dengan Laravel 12, Blade, Alpine.js, dan Tailwind CSS.
 - Ringkasan per rentang tanggal: pendapatan (setelah diskon, termasuk PPN), modal barang terjual, laba kotor, pengeluaran, dan laba bersih.
 - Harga beli disimpan di setiap item transaksi, jadi perubahan harga beli barang tidak mengubah laba transaksi lama.
 - Grafik pendapatan harian, pengeluaran harian, perbandingan keduanya, dan komposisi metode pembayaran.
+- Ekspor periode yang dipilih ke PDF (ringkasan, metode pembayaran, angka harian, dan pengeluaran per kategori) atau CSV yang siap dibuka di Excel: ringkasan harian, rincian transaksi, dan rincian pengeluaran.
 - Pencatatan pengeluaran (listrik, gaji, perlengkapan, sewa) dengan lampiran bukti.
 
 ### Pengaturan
@@ -207,6 +208,7 @@ Cakupan test utama:
 | `tests/Feature/RateLimitTest.php` | Batas request AI (10/menit, per akun) dan checkout (60/menit), reset setelah satu menit |
 | `tests/Feature/ReceiptTest.php` | Struk membaca profil toko, ukuran kertas, margin, cetak otomatis, baris pembulatan, tanda batal; satu sumber struk di kasir dan cetak ulang |
 | `tests/Feature/ProfitReportTest.php` | Harga beli tersimpan saat jual, laba kotor dan laba bersih, transaksi batal tidak dihitung, pendapatan termasuk PPN |
+| `tests/Feature/ReportExportTest.php` | Ekspor PDF/CSV per periode, isi dan total konsisten, transaksi batal, keamanan formula CSV, validasi dan akses owner |
 | `tests/Feature/AppConfigurationTest.php` | Zona waktu, skrip deploy tidak di `public/` dan wajib secret, tidak ada `env()` di kode aplikasi, konfigurasi Gemini |
 | `tests/Feature/Auth/*` | Login, akun nonaktif, registrasi dinonaktifkan, reset password |
 

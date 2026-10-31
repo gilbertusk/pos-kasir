@@ -4,14 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\Expense;
+use App\Support\SalesReport;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class ReportController extends Controller
 {
     public function index()
     {
-        return view('reports.index');
+        $defaultEnd = now()->toDateString();
+        $defaultStart = now()->subDays(6)->toDateString();
+
+        return view('reports.index', compact('defaultStart', 'defaultEnd'));
     }
 
     public function getData(Request $request)
@@ -50,5 +57,32 @@ class ReportController extends Controller
             'daily_expenses' => $dailyExpenses,
             'payment_methods' => $paymentMethods,
         ]);
+    }
+
+    public function export(Request $request)
+    {
+        $validated = $request->validate([
+            'format' => 'required|in:pdf,csv',
+            'report' => [Rule::requiredIf($request->input('format') === 'csv'), 'nullable', 'in:harian,transaksi,pengeluaran'],
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ]);
+
+        $endDate = $validated['end_date'] ?? now()->toDateString();
+        $startDate = $validated['start_date'] ?? now()->subDays(6)->toDateString();
+
+        if (Carbon::parse($startDate)->diffInDays(Carbon::parse($endDate)) > 366) {
+            return back()->withErrors(['end_date' => 'Periode ekspor maksimal 367 hari.'])->withInput();
+        }
+
+        $report = new SalesReport($startDate, $endDate);
+
+        if ($validated['format'] === 'csv') {
+            return $report->downloadCsv($validated['report'] ?? 'harian');
+        }
+
+        return Pdf::loadView('reports.pdf', $report->pdfData())
+            ->setPaper('a4', 'landscape')
+            ->download("laporan_{$startDate}_{$endDate}.pdf");
     }
 }
