@@ -7,8 +7,7 @@
         'taxEnabled' => (bool)$taxEnabled,
         'taxPercent' => (float)$taxPercent,
         'maxDiscount' => (float)$maxDiscount,
-        'storeName' => \App\Models\Setting::getValue('store_name', config('app.name')),
-        'storeAddress' => \App\Models\Setting::getValue('store_address', '')
+        'autoPrint' => $autoPrint,
     ]) }})" x-init="init()"
          class="lg:grid lg:h-[calc(100dvh-4rem)] lg:grid-cols-[minmax(0,1fr)_380px] lg:grid-rows-[minmax(0,1fr)]">
 
@@ -201,36 +200,10 @@
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                     <p id="receipt-title" class="text-sm font-semibold">Pembayaran lunas</p>
                 </div>
-                <div id="receipt-content" class="flex-1 overflow-y-auto p-6 text-center" style="font-family: monospace; font-size: 12px;">
-                    <h3 class="mb-1 text-lg font-bold text-ink" x-text="storeName"></h3>
-                    <p class="mb-4 text-xs text-enamel-500" x-text="storeAddress"></p>
-                    <hr class="mb-3 border-dashed">
-                    <div class="mb-3 space-y-1 text-left text-xs">
-                        <p>No: <span x-text="lastTransaction?.transaction_number"></span></p>
-                        <p>Kasir: <span x-text="lastTransaction?.user?.name"></span></p>
-                        <p>Tanggal: <span x-text="formatDate(lastTransaction?.created_at)"></span></p>
-                    </div>
-                    <hr class="mb-3 border-dashed">
-                    <template x-for="item in lastTransaction?.items || []" :key="item.id">
-                        <div class="mb-2 text-left text-xs">
-                            <p class="font-semibold" x-text="item.product_name"></p>
-                            <div class="flex justify-between">
-                                <span x-text="item.quantity + ' x ' + formatRupiah(item.price)"></span>
-                                <span x-text="formatRupiah(item.subtotal)"></span>
-                            </div>
-                        </div>
-                    </template>
-                    <hr class="my-3 border-dashed">
-                    <div class="space-y-1 text-left text-xs">
-                        <div class="flex justify-between"><span>Subtotal</span><span x-text="formatRupiah(lastTransaction?.subtotal)"></span></div>
-                        <div x-show="lastTransaction?.discount_amount > 0" class="flex justify-between"><span>Diskon</span><span x-text="'-' + formatRupiah(lastTransaction?.discount_amount)"></span></div>
-                        <div x-show="lastTransaction?.tax_amount > 0" class="flex justify-between"><span x-text="'PPN ' + lastTransaction?.tax_percent + '%'"></span><span x-text="formatRupiah(lastTransaction?.tax_amount)"></span></div>
-                        <div class="flex justify-between border-t border-dashed pt-1 text-sm font-bold"><span>TOTAL</span><span x-text="formatRupiah(lastTransaction?.total)"></span></div>
-                        <div class="flex justify-between"><span x-text="lastTransaction?.payment_method?.toUpperCase()"></span><span x-text="formatRupiah(lastTransaction?.paid_amount)"></span></div>
-                        <div x-show="lastTransaction?.change_amount > 0" class="flex justify-between"><span>Kembali</span><span x-text="formatRupiah(lastTransaction?.change_amount)"></span></div>
-                    </div>
-                    <hr class="my-3 border-dashed">
-                    <p class="text-xs text-enamel-500">Terima kasih!</p>
+                {{-- Same page as reprints, so the preview always matches the printed receipt. --}}
+                <div class="flex-1 overflow-hidden bg-enamel-100 p-3">
+                    <iframe x-ref="receiptFrame" :src="receiptUrl" @load="onReceiptLoaded()" title="Pratinjau struk"
+                            class="h-[60dvh] w-full rounded-lg bg-white shadow-sm"></iframe>
                 </div>
                 <div class="flex gap-3 border-t border-enamel-200 bg-enamel-50 p-4">
                     <button type="button" @click="printReceipt()" class="btn-secondary flex-1">Cetak struk</button>
@@ -262,8 +235,9 @@
             showReceipt: false,
             showCart: false,
             lastTransaction: null,
-            storeName: config.storeName,
-            storeAddress: config.storeAddress,
+            autoPrint: config.autoPrint,
+            receiptUrl: 'about:blank',
+            printOnLoad: false,
 
             init() { this.fetchProducts(); },
 
@@ -308,7 +282,6 @@
             },
 
             formatRupiah(n) { return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); },
-            formatDate(d) { return d ? new Date(d).toLocaleString('id-ID') : ''; },
 
             async submitTransaction() {
                 if (this.cart.length === 0) return;
@@ -335,6 +308,9 @@
                     if (data.success) {
                         this.lastTransaction = data.transaction;
                         this.showCart = false;
+                        this.printOnLoad = this.autoPrint;
+                        // The preview never prints by itself; this screen decides when to print.
+                        this.receiptUrl = `{{ url('/transactions') }}/${data.transaction.id}/receipt?print=0`;
                         this.showReceipt = true;
                         this.clearCart();
                         this.fetchProducts();
@@ -345,11 +321,17 @@
                 this.isSubmitting = false;
             },
 
+            onReceiptLoaded() {
+                if (this.receiptUrl === 'about:blank' || !this.printOnLoad) return;
+                this.printOnLoad = false;
+                this.printReceipt();
+            },
+
             printReceipt() {
-                const content = document.getElementById('receipt-content').innerHTML;
-                const w = window.open('', '_blank', 'width=350,height=600');
-                w.document.write(`<html><head><title>Struk</title><style>body{font-family:monospace;font-size:12px;padding:10px;} hr{border-style:dashed;}</style></head><body>${content}</body></html>`);
-                w.document.close(); w.print(); w.close();
+                const frame = this.$refs.receiptFrame?.contentWindow;
+                if (!frame || this.receiptUrl === 'about:blank') return;
+                frame.focus();
+                frame.print();
             }
         }
     }

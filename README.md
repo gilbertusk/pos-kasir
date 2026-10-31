@@ -52,7 +52,8 @@ Dibangun dengan Laravel 12, Blade, Alpine.js, dan Tailwind CSS.
 - Pencatatan pengeluaran (listrik, gaji, perlengkapan, sewa) dengan lampiran bukti.
 
 ### Pengaturan
-- Profil toko (nama, alamat, telepon, WhatsApp, NPWP, logo). Nama toko tampil di struk dan sidebar.
+- Profil toko (nama, alamat, telepon, WhatsApp, NPWP, logo). Semua tampil di struk (WhatsApp dan NPWP hanya jika diisi), nama toko juga di sidebar.
+- Struk: ukuran kertas 58mm/80mm, margin, dan cetak otomatis setelah bayar. Layar kasir dan cetak ulang memakai halaman struk yang sama. Struk transaksi batal ditandai "DIBATALKAN".
 - Pajak dan diskon: aktif/nonaktif PPN, persentase PPN, batas diskon maksimal.
 - Format nomor transaksi (`{YYYY}`, `{YY}`, `{MM}`, `{DD}`, `{XXX}`) dengan reset harian, bulanan, tahunan, atau tidak pernah. Nomor dijamin unik walau beberapa kasir membayar bersamaan.
 - Manajemen pengguna: tambah akun owner/kasir dan nonaktifkan akun. Akun yang dinonaktifkan langsung tidak bisa login.
@@ -197,6 +198,7 @@ Cakupan test utama:
 | `tests/Feature/UserManagementTest.php` | Proteksi hapus/nonaktifkan akun sendiri dan akun yang punya riwayat |
 | `tests/Feature/TransactionTest.php` | Detail transaksi, pembatalan dengan alasan, stok dikembalikan sekali, tombol batal hanya untuk owner |
 | `tests/Feature/TransactionNumberTest.php` | Format dan reset nomor transaksi, nomor tidak bentrok, validasi pengaturan |
+| `tests/Feature/ReceiptTest.php` | Struk membaca profil toko, ukuran kertas, margin, cetak otomatis, tanda batal; satu sumber struk di kasir dan cetak ulang |
 | `tests/Feature/ProfitReportTest.php` | Harga beli tersimpan saat jual, laba kotor dan laba bersih, transaksi batal tidak dihitung, pendapatan termasuk PPN |
 | `tests/Feature/Auth/*` | Login, akun nonaktif, registrasi dinonaktifkan, reset password |
 

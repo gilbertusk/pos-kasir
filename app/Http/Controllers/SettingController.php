@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Setting;
 use App\Models\User;
+use App\Support\ReceiptPaper;
 use App\Support\TransactionNumberFormat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -72,8 +73,18 @@ class SettingController extends Controller
                     }
                 },
             ],
-            'printer_size' => 'nullable|in:58mm,80mm',
-            'printer_margin' => 'nullable|numeric|min:0',
+            'printer_size' => 'nullable|in:' . implode(',', ReceiptPaper::sizes()),
+            'printer_margin' => [
+                'nullable', 'numeric', 'min:0',
+                function (string $attribute, mixed $value, \Closure $fail) use ($request) {
+                    $size = $request->input('printer_size');
+                    $max = ReceiptPaper::maxMargin($size);
+
+                    if (is_numeric($value) && $value > $max) {
+                        $fail('Margin maksimal ' . $max . ' mm untuk kertas ' . ReceiptPaper::normalize($size) . '.');
+                    }
+                },
+            ],
             'auto_print' => 'nullable|boolean',
         ], [
             'transaction_format.required' => 'Format nomor transaksi wajib diisi.',

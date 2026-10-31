@@ -21,8 +21,9 @@ class KasirController extends Controller
         $taxEnabled = Setting::getValue('tax_enabled', '1');
         $taxPercent = Setting::getValue('tax_percent', '11');
         $maxDiscount = Setting::getValue('max_discount', '50');
+        $autoPrint = Setting::getValue('auto_print', '1') === '1';
 
-        return view('kasir.index', compact('products', 'categories', 'taxEnabled', 'taxPercent', 'maxDiscount'));
+        return view('kasir.index', compact('products', 'categories', 'taxEnabled', 'taxPercent', 'maxDiscount', 'autoPrint'));
     }
 
     public function getProducts(Request $request)
